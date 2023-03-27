@@ -12,7 +12,7 @@ problemsize=10000000
 do
     export OMP_NUM_THREADS=$i
 	./atan problemsize 0
-done) >> speedup.csv
+done) >> strong.csv
 
 (for i in 1 2 4 8 16 24 32 48
 do
