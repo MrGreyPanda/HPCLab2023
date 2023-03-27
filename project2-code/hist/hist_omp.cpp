@@ -31,35 +31,37 @@ int main() {
     // Initialize histogram
     // Set all bins to zero
     long dist[BINS];
+    long local_dist[BINS];
     for (int i = 0; i < BINS; ++i) {
         dist[i] = 0;
+        local_dist[i] = 0;
     }
 
     time_start = wall_time();
 
 // TODO Parallelize the histogram computation
-#pragma omp parallel {
-    local_dist[BINS] = dist[BINS];
+#pragma omp parallel
+    {
 #pragma omp for nowait
-    for (long i = 0; i < VEC_SIZE; ++i) {
-        local_dist[vec[i]]++;
-    }
+        for (long i = 0; i < VEC_SIZE; ++i) {
+            local_dist[vec[i]]++;
+        }
 
 #pragma omp critical
-    for (long i = 0; i < BINS; i++) {
-        dist[i] += local_dist[i];
+        for (long i = 0; i < BINS; i++) {
+            dist[i] += local_dist[i];
+        }
     }
-}
 
-time_end = wall_time();
+    time_end = wall_time();
 
-// Write results
-for (int i = 0; i < BINS; ++i) {
-    cout << "dist[" << i << "]=" << dist[i] << endl;
-}
-cout << "Time: " << time_end - time_start << " sec" << endl;
+    // Write results
+    for (int i = 0; i < BINS; ++i) {
+        cout << "dist[" << i << "]=" << dist[i] << endl;
+    }
+    cout << "Time: " << time_end - time_start << " sec" << endl;
 
-delete[] vec;
+    delete[] vec;
 
-return 0;
+    return 0;
 }

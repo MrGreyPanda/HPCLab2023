@@ -1,0 +1,10 @@
+gcc -o mandel_seq -I. -O3 mandel_seq.c pngwriter.c -lpng
+gcc -o mandel_par -I. -O3 -fopenmp mandel_par.c pngwriter.c -lpng
+Total time:                 7338.44 millisconds
+Image size:                 4096 x 4096 = 16777216 Pixels
+Total number of iterations: 505450034847
+Avg. time per pixel:        0.437405 microseconds
+Avg. time per iteration:    1.45186e-05 microseconds
+Iterations/second:          6.88771e+10
+MFlop/s:                    551016
+rm -rf mandel_seq
