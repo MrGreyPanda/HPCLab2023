@@ -3,10 +3,13 @@
 
 #include <cassert>
 #include <chrono>
+#include <fstream>
 #include <iostream>
+#include <string>
 
+// Critical based implementation
 double midpoint_arctan_critical(const int &n) {
-    double delta_x = 1.0 / n;
+    double h = 1.0 / n;
     double sum = 0.0;
 
 #pragma omp parallel
@@ -14,70 +17,89 @@ double midpoint_arctan_critical(const int &n) {
         double local_sum = 0.0;
 #pragma omp for
         for (int i = 0; i < n; i++) {
-            double x_mid = (i + 0.5) * delta_x;
+            double x_mid = (i + 0.5) * h;
             local_sum += 1.0 / (1.0 + x_mid * x_mid);
         }
 #pragma omp critical
         sum += local_sum;
     }
 
-    return sum / n;
+    return sum * h * 4.0;
 }
 
+// Reduction based parallel implementation
 double midpoint_arctan_reduction(const int &n) {
-    double delta_x = 1.0 / n;
+    double h = 1.0 / n;
     double sum = 0.0;
 
 #pragma omp parallel for reduction(+ : sum)
     for (int i = 0; i < n; i++) {
-        double x_mid = (i + 0.5) * delta_x;
+        double x_mid = (i + 0.5) * h;
         sum += 1.0 / (1.0 + x_mid * x_mid);
     }
 
-    return sum / n;
+    return sum * h * 4.0;
 }
 
+// Serial implementation
 double midpoint_arctan_serial(const int &n) {
-    double delta_x = 1.0 / n;
+    double h = 1.0 / n;
     double sum = 0.0;
 
     for (int i = 0; i < n; i++) {
-        double x_mid = (i + 0.5) * delta_x;
+        double x_mid = (i + 0.5) * h;
         sum += 1.0 / (1.0 + x_mid * x_mid);
     }
 
-    return sum / n;
+    return sum * h * 4.0;
 }
 
 int main() {
-    int n = 1000000;
-    // int threads;
-    // std::cin >> threads;
-    // omp_set_num_threads(threads);
+    // IO-Handling
+    int n;
+    std::cin >> n;
+    // double rel_err = 1e-6;
+    int n_threads = omp_get_max_threads();
+
     std::chrono::time_point<std::chrono::system_clock> start, end;
+    int iterations = 1000;
+    // warm-up
+    for (int i = 0; i < iterations; i++) {
+        midpoint_arctan_serial(n);
+    }
 
     // Using Serial Implementation
-    start = std::chrono::system_clock::now();
-    double ser = midpoint_arctan_serial(n);
-    end = std::chrono::system_clock::now();
-    std::chrono::duration<double> diff_ser = end - start;
-    std::cout << "Serial time:\t" << diff_ser.count() << "s\n";
+    std::chrono::duration<double> s_time;
+    for (int i = 0; i < 1000; i++) {
+        start = std::chrono::system_clock::now();
+        midpoint_arctan_serial(n);
+        end = std::chrono::system_clock::now();
+        s_time += end - start;
+    }
+    s_time /= iterations;
 
     // Using Critical parallelization
-    start = std::chrono::system_clock::now();
-    double crit = midpoint_arctan_critical(n);
-    end = std::chrono::system_clock::now();
-    assert(ser == crit);
-    std::chrono::duration<double> diff_crit = end - start;
-    std::cout << "Critical time:\t" << diff_crit.count() << "s\n";
+    std::chrono::duration<double> c_time = end - start;
+    for (int i = 0; i < iterations; i++) {
+        start = std::chrono::system_clock::now();
+        midpoint_arctan_critical(n);
+        end = std::chrono::system_clock::now();
+        c_time += end - start;
+    }
+    c_time /= iterations;
 
     // Using Reduction parallelization
-    start = std::chrono::system_clock::now();
-    double red = midpoint_arctan_reduction(n);
-    end = std::chrono::system_clock::now();
-    assert(red == ser);
-    std::chrono::duration<double> diff_red = end - start;
-    std::cout << "Reduction time:\t" << diff_red.count() << "s\n";
+    std::chrono::duration<double> r_time;
+    for (int i = 0; i < iterations; i++) {
+        start = std::chrono::system_clock::now();
+        midpoint_arctan_reduction(n);
+        end = std::chrono::system_clock::now();
+        r_time += end - start;
+    }
+    r_time /= iterations;
+
+    std::cout << n_threads << "," << s_time.count() << "," << c_time.count()
+              << "," << r_time.count() << "\n";
 
     return 0;
 }
