@@ -2,7 +2,7 @@
 
 # Compiler specifications
 CXX=g++
-CFLAGS=-Wall -Wextra -pedantic -fopenmp
+CFLAGS=-Wall -Wextra -pedantic -fopenmp -std=c++11
 
 # File names
 EXEC=atan

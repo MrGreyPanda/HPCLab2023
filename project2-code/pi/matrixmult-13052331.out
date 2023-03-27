@@ -1,0 +1,24 @@
+g++ -Wall -Wextra -pedantic -fopenmp -std=c++11 -c atan.cpp -o atan.o
+g++ -Wall -Wextra -pedantic -fopenmp -std=c++11 atan.o -o atan
+
+libgomp: Thread creation failed: Resource temporarily unavailable
+Serial time:	0.00517511s
+
+libgomp: Thread creation failed: Resource temporarily unavailable
+Serial time:	0.00640969s
+
+libgomp: Thread creation failed: Resource temporarily unavailable
+Serial time:	0.00535663s
+
+libgomp: Thread creation failed: Resource temporarily unavailable
+Serial time:	0.00532391s
+
+libgomp: Thread creation failed: Resource temporarily unavailable
+Serial time:	0.00682169s
+
+libgomp: Thread creation failed: Resource temporarily unavailable
+Serial time:	0.00601288s
+
+libgomp: Thread creation failed: Resource temporarily unavailable
+Serial time:	0.00540255s
+rm -f atan atan.o

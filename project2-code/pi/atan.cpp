@@ -1,6 +1,7 @@
 #include <math.h>
 #include <omp.h>
 
+#include <cassert>
 #include <chrono>
 #include <iostream>
 
@@ -45,26 +46,34 @@ double midpoint_arctan_serial(const int &n) {
 }
 
 int main() {
-    int n = 10000;
+    int n = 1000000;
+    int threads;
+    std::cin >> threads;
+    omp_set_num_threads(threads);
     std::chrono::time_point<std::chrono::system_clock> start, end;
 
+    // Using Serial Implementation
     start = std::chrono::system_clock::now();
     double ser = midpoint_arctan_serial(n);
     end = std::chrono::system_clock::now();
     std::chrono::duration<double> diff_ser = end - start;
     std::cout << "Serial time:\t" << diff_ser.count() << "s\n";
 
+    // Using Critical parallelization
     start = std::chrono::system_clock::now();
     double crit = midpoint_arctan_critical(n);
     end = std::chrono::system_clock::now();
+    assert(ser == crit);
     std::chrono::duration<double> diff_crit = end - start;
-    std::cout << "Critical time:\t" << diff_crit.count() << " seconds\n";
+    std::cout << "Critical time:\t" << diff_crit.count() << "s\n";
 
+    // Using Reduction parallelization
     start = std::chrono::system_clock::now();
     double red = midpoint_arctan_reduction(n);
     end = std::chrono::system_clock::now();
+    assert(red == ser);
     std::chrono::duration<double> diff_red = end - start;
-    std::cout << "Reduction time:\t" << diff_red.count() << " seconds\n";
+    std::cout << "Reduction time:\t" << diff_red.count() << "s\n";
 
     return 0;
 }
