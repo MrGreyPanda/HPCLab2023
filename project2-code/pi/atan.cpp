@@ -9,15 +9,18 @@ double midpoint_arctan_critical(const int &n) {
     double delta_x = 1.0 / n;
     double sum = 0.0;
 
-#pragma omp parallel for
+#pragma omp parallel {
+    double local_sum = 0.0;
+#pragma omp for
     for (int i = 0; i < n; i++) {
         double x_mid = (i + 0.5) * delta_x;
-        double local_sum = 1.0 / (1.0 + x_mid * x_mid);
-#pragma omp critical
-        sum += local_sum;
+        local_sum += 1.0 / (1.0 + x_mid * x_mid);
     }
+#pragma omp critical
+    sum += local_sum;
+}
 
-    return sum / n;
+return sum / n;
 }
 
 double midpoint_arctan_reduction(const int &n) {
@@ -47,9 +50,9 @@ double midpoint_arctan_serial(const int &n) {
 
 int main() {
     int n = 1000000;
-    int threads;
-    std::cin >> threads;
-    omp_set_num_threads(threads);
+    // int threads;
+    // std::cin >> threads;
+    // omp_set_num_threads(threads);
     std::chrono::time_point<std::chrono::system_clock> start, end;
 
     // Using Serial Implementation

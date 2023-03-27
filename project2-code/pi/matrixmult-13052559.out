@@ -1,0 +1,26 @@
+g++ -Wall -Wextra -pedantic -fopenmp -std=c++11 -c atan.cpp -o atan.o
+atan.cpp: In function ‘double midpoint_arctan_critical(const int&)’:
+atan.cpp:12:22: error: expected ‘#pragma omp’ clause before ‘{’ token
+ #pragma omp parallel {
+                      ^
+atan.cpp:13:12: warning: unused variable ‘local_sum’ [-Wunused-variable]
+     double local_sum = 0.0;
+            ^
+atan.cpp:17:9: error: ‘local_sum’ was not declared in this scope
+         local_sum += 1.0 / (1.0 + x_mid * x_mid);
+         ^
+atan.cpp:20:12: error: ‘local_sum’ was not declared in this scope
+     sum += local_sum;
+            ^
+atan.cpp:21:1: warning: no return statement in function returning non-void [-Wreturn-type]
+ }
+ ^
+atan.cpp: At global scope:
+atan.cpp:23:1: error: expected unqualified-id before ‘return’
+ return sum / n;
+ ^
+atan.cpp:24:1: error: expected declaration before ‘}’ token
+ }
+ ^
+make: *** [Makefile:15: atan.o] Error 1
+rm -f atan atan.o
