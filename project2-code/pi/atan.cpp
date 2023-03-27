@@ -105,15 +105,15 @@ int main() {
     // weak Scaling
     if (s_w == 1) {
         std::cout << n_threads << "," << s_time.count() / s_time.count() << ","
-                  << c_time.count() / s_time.count() << ","
-                  << r_time.count() / s_time.count() << "\n";
+                  << s_time.count() / c_time.count() << ","
+                  << s_time.count() / r_time.count() << "\n";
     }
 
     // strong Scaling
     else {
         std::cout << n_threads << "," << s_time.count() / s_time.count() << ","
-                  << c_time.count() / s_time.count() << ","
-                  << r_time.count() / s_time.count() << "\n";
+                  << s_time.count() / c_time.count() << ","
+                  << s_time.count() / r_time.count() << "\n";
     }
     return 0;
 }
