@@ -46,7 +46,11 @@ int main(int argc, char **argv) {
             // |z|=2. stop if the number of iterations exceeds the bound
             // MAX_ITERS.
             while (n < MAX_ITERS && z * z < 4) {
-                z = z * z + cx + cy;
+                double x_tmp = x2 - y2 + cx;
+                y = 2.0 * x * y + cy;
+                x = x_tmp;
+                x2 = x * x;
+                y2 = y * y;
                 ++n;
                 ++nTotalIterationsCount;
             }

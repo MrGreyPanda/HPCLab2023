@@ -26,7 +26,7 @@ int main(int argc, char **argv) {
     unsigned long nTimeStart = get_time();
 
     long i, j, n;
-
+    double x_tmp;
     n = 0;
     // do the calculation
     for (j = 0; j < IMAGE_HEIGHT; j++) {
@@ -37,15 +37,18 @@ int main(int argc, char **argv) {
             x2 = x * x;
             y2 = y * y;
 
-            z = x + y;
             // compute the orbit z, f(z), f^2(z), f^3(z), ...
             // count the iterations until the orbit leaves the circle
             // |z|=2. stop if the number of iterations exceeds the bound
             // MAX_ITERS.
             // TODO
             // >>>>>>>> CODE IS MISSING
-            while (n < MAX_ITERS && z * z < 4) {
-                z = z * z + cx + cy;
+            while (n < MAX_ITERS && x2 + y2 < 4.0) {
+                x_tmp = x2 - y2 + cx;
+                y = 2.0 * x * y + cy;
+                x = x_tmp;
+                x2 = x * x;
+                y2 = y * y;
                 ++n;
                 ++nTotalIterationsCount;
             }

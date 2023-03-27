@@ -76,7 +76,7 @@ int main(int argc, char **argv) {
         midpoint_arctan_serial(n);
     }
 
-    // Using Serial Implementation
+    // Using Serial Implementation -------------------
     std::chrono::duration<double> s_time;
     start = std::chrono::high_resolution_clock::now();
     for (int i = 0; i < iterations; i++) {
@@ -87,8 +87,10 @@ int main(int argc, char **argv) {
     s_time /= iterations;
     ser /= iterations;
     assert(abs(M_PI - ser) < abs_err);
+    // ------------------------------------------------
 
-    // Using Critical parallelization
+
+    // Using Critical parallelization -----------------
     std::chrono::duration<double> c_time;
     start = std::chrono::high_resolution_clock::now();
     for (int i = 0; i < iterations; i++) {
@@ -99,8 +101,9 @@ int main(int argc, char **argv) {
     c_time /= iterations;
     crit /= iterations;
     assert(abs(crit - M_PI) < abs_err);
+    // ------------------------------------------------
 
-    // Using Reduction parallelization
+    // Using Reduction parallelization ----------------
     std::chrono::duration<double> r_time;
     start = std::chrono::high_resolution_clock::now();
     for (int i = 0; i < iterations; i++) {
@@ -111,6 +114,7 @@ int main(int argc, char **argv) {
     r_time /= iterations;
     red /= iterations;
     assert(abs(red - M_PI) < abs_err);
+    // ------------------------------------------------
 
     double crit_speedup = s_time.count() / c_time.count();
     double red_speedup = s_time.count() / r_time.count();
