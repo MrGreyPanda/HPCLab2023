@@ -1,11 +1,9 @@
-CXX=icpc
-CXXFLAGS=-O3  -qopenmp
-LDFLAGS=-qopenmp
+CXX=c++
+CXXFLAGS=-O2  -fopenmp
+LDFLAGS=-fopenmp
 SOURCES=quicksort.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
 EXECUTABLE=quicksort
-
-all: $(SOURCES) $(EXECUTABLE)
 
 $(EXECUTABLE): $(OBJECTS)
 	$(CXX) $(LDFLAGS) $(OBJECTS) -o $@
@@ -13,8 +11,6 @@ $(EXECUTABLE): $(OBJECTS)
 .cpp.o:
 	$(CXX) -c $(CXXFLAGS) $< -o $@ $(DEFINES)
 	
-$(SOURCES): Makefile
-	touch $@
 
 clean:
 	rm *.o $(EXECUTABLE)

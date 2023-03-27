@@ -1,0 +1,6 @@
+c++ -Wall -Wextra -pedantic -fopenmp -std=c++11 -O3 -c atan.cpp -o atan.o
+atan.cpp:57:5: warning: unused parameter ‘argc’ [-Wunused-parameter]
+ int main(int argc, char **argv) {
+     ^
+c++ -Wall -Wextra -pedantic -fopenmp -std=c++11 -O3 atan.o -o atan
+rm -f atan atan.o

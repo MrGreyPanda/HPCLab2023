@@ -88,20 +88,21 @@ int main(int argc, char **argv) {
 
     // print_list(data, length);
 
-#pragma omp parallel {
+#pragma omp parallel
+    {
 #pragma omp single
-    quicksort(data, length);
+        quicksort(data, length);
 #pragma omp taskwait
-}
-double time = stopwatch.stop();
+    }
+    double time = stopwatch.stop();
 
-// print_list(data, length);
+    // print_list(data, length);
 
-printf("Size of dataset: %d, elapsed time[s] %e \n", length, time);
+    printf("%d,%e \n", length, time);
 
-if (check(data, length) != 0) {
-    printf("Quicksort incorrect.\n");
-}
+    if (check(data, length) != 0) {
+        printf("Quicksort incorrect.\n");
+    }
 
-return (0);
+    return (0);
 }

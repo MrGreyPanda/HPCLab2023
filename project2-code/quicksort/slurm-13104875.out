@@ -1,0 +1,7 @@
+c++ -c -O2  -fopenmp quicksort.cpp -o quicksort.o 
+c++ -fopenmp quicksort.o -o quicksort
+/var/spool/slurm/slurmd/state/job13104875/slurm_script: line 8: 97452 Segmentation fault      ./quicksort $size
+/var/spool/slurm/slurmd/state/job13104875/slurm_script: line 8: 97453 Segmentation fault      ./quicksort $size
+/var/spool/slurm/slurmd/state/job13104875/slurm_script: line 8: 97454 Segmentation fault      ./quicksort $size
+/var/spool/slurm/slurmd/state/job13104875/slurm_script: line 8: 97455 Segmentation fault      ./quicksort $size
+rm *.o quicksort
