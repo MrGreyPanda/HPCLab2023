@@ -40,13 +40,12 @@ int main(int argc, char **argv) {
                 x2 = x * x;
                 y2 = y * y;
 
-                double z = x + y;  // fixed missing "double" declaration
                 n = 0;
                 // compute the orbit z, f(z), f^2(z), f^3(z), ...
                 // count the iterations until the orbit leaves the circle
                 // |z|=2. stop if the number of iterations exceeds the bound
                 // MAX_ITERS.
-                while (n < MAX_ITERS && z * z < 4) {
+                while (n < MAX_ITERS && x2 + y2 < 4.0) {
                     double x_tmp = x2 - y2 + cx;
                     y = 2.0 * x * y + cy;
                     x = x_tmp;
@@ -60,7 +59,6 @@ int main(int argc, char **argv) {
                 int c = ((long)n * 255) / MAX_ITERS;
 #pragma omp critical
                 png_plot(pPng, i, j, c, c, c);
-                n = 0;
             }
         }
     }

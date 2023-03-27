@@ -7,5 +7,5 @@ mandel_par: mandel_par.c pngwriter.c
 	gcc -o $@ -I. -O3 -fopenmp $^ -lpng
 
 clean:
-	rm -rf mandel_seq
+	rm -rf mandel_seq mandel_par
 
