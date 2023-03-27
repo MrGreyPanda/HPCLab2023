@@ -11,8 +11,8 @@ OBJS=$(SRCS:.cpp=.o)
 
 
 # Compilation rules
-%.o: %.cpp 
-	$(CXX) $(CFLAGS) -c $< -o $@
+# %.o: %.cpp 
+# 	$(CXX) $(CFLAGS) -c $< -o $@
 
 $(EXEC): $(OBJS)
 	$(CXX) $(CFLAGS) $(OBJS) -o $(EXEC)

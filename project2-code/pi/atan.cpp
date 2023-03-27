@@ -9,18 +9,19 @@ double midpoint_arctan_critical(const int &n) {
     double delta_x = 1.0 / n;
     double sum = 0.0;
 
-#pragma omp parallel {
-    double local_sum = 0.0;
+#pragma omp parallel
+    {
+        double local_sum = 0.0;
 #pragma omp for
-    for (int i = 0; i < n; i++) {
-        double x_mid = (i + 0.5) * delta_x;
-        local_sum += 1.0 / (1.0 + x_mid * x_mid);
-    }
+        for (int i = 0; i < n; i++) {
+            double x_mid = (i + 0.5) * delta_x;
+            local_sum += 1.0 / (1.0 + x_mid * x_mid);
+        }
 #pragma omp critical
-    sum += local_sum;
-}
+        sum += local_sum;
+    }
 
-return sum / n;
+    return sum / n;
 }
 
 double midpoint_arctan_reduction(const int &n) {
