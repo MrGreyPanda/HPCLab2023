@@ -13,13 +13,10 @@ module load gcc openmpi
 make
 
 # Call the C executable with different array sizes and save the output
-(for t in 1 2 4 8 16 24 32
+(for i in 10000 100000 1000000 10000000
 do
-    for i in 10000 100000 1000000 10000000
-    do
-        export OMP_NUM_THREADS=$t
-        srun ./quicksort $i
-    done
+    export OMP_NUM_THREADS=$t
+    srun ./quicksort $i
 done) >> quicksort.csv 
 
 # Remove the compiled binary (this is optional)

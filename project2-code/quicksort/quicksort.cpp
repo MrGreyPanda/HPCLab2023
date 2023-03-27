@@ -101,18 +101,7 @@ int main(int argc, char **argv) {
     double time = stopwatch.stop();
 
     // print_list(data, length);
-    double x = 0;
-    if (length == 10000)
-        x = 1.557403e-03 / time;
-    else if (length == 100000)
-        x = 1.610007e-02 / time;
-    else if (length == 1000000)
-        x = 1.836374e-01 / time;
-    else if (length == 10000000)
-        x = 1.941233e+00 / time;
-    else
-        x = 0;
-    printf("%d,%e,%d,%d,%e\n", length, time, omp_get_max_threads(), x);
+    printf("%d,%e,%d\n", length, time, omp_get_max_threads());
 
     if (check(data, length) != 0) {
         printf("Quicksort incorrect.\n");
