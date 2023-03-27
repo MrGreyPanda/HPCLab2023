@@ -1,0 +1,79 @@
+g++ -Wall -Wextra -pedantic -fopenmp -c atan.cpp -o atan.o
+In file included from /usr/include/c++/4.8.2/chrono:35:0,
+                 from atan.cpp:4:
+/usr/include/c++/4.8.2/bits/c++0x_warning.h:32:2: error: #error This file requires compiler and library support for the ISO C++ 2011 standard. This support is currently experimental, and must be enabled with the -std=c++11 or -std=gnu++11 compiler options.
+ #error This file requires compiler and library support for the \
+  ^
+atan.cpp: In function ‘int main()’:
+atan.cpp:68:10: error: ‘std::chrono’ has not been declared
+     std::chrono::time_point<std::chrono::system_clock> start, end;
+          ^
+atan.cpp:68:34: error: ‘std::chrono’ has not been declared
+     std::chrono::time_point<std::chrono::system_clock> start, end;
+                                  ^
+atan.cpp:68:56: error: ‘start’ was not declared in this scope
+     std::chrono::time_point<std::chrono::system_clock> start, end;
+                                                        ^
+atan.cpp:68:63: error: ‘end’ was not declared in this scope
+     std::chrono::time_point<std::chrono::system_clock> start, end;
+                                                               ^
+atan.cpp:70:18: error: ‘std::chrono’ has not been declared
+     start = std::chrono::system_clock::now();
+                  ^
+atan.cpp:71:5: error: ‘crit’ was not declared in this scope
+     crit = midpoint_arctan_serial(n);
+     ^
+atan.cpp:72:16: error: ‘std::chrono’ has not been declared
+     end = std::chrono::system_clock::now();
+                ^
+atan.cpp:73:10: error: ‘std::chrono’ has not been declared
+     std::chrono::duration<double> diff_ser = end - start;
+          ^
+atan.cpp:73:27: error: expected primary-expression before ‘double’
+     std::chrono::duration<double> diff_ser = end - start;
+                           ^
+atan.cpp:73:27: error: expected ‘;’ before ‘double’
+atan.cpp:74:38: error: ‘diff_ser’ was not declared in this scope
+     std::cout << "Serial time:\t" << diff_ser << "s\n";
+                                      ^
+atan.cpp:76:18: error: ‘std::chrono’ has not been declared
+     start = std::chrono::system_clock::now();
+                  ^
+atan.cpp:78:16: error: ‘std::chrono’ has not been declared
+     end = std::chrono::system_clock::now();
+                ^
+atan.cpp:79:10: error: ‘std::chrono’ has not been declared
+     std::chrono::duration<double> diff_crit = end - start;
+          ^
+atan.cpp:79:27: error: expected primary-expression before ‘double’
+     std::chrono::duration<double> diff_crit = end - start;
+                           ^
+atan.cpp:79:27: error: expected ‘;’ before ‘double’
+atan.cpp:80:40: error: ‘critical_time’ was not declared in this scope
+     std::cout << "Critical time:\t" << critical_time << " seconds\n";
+                                        ^
+atan.cpp:82:18: error: ‘std::chrono’ has not been declared
+     start = std::chrono::system_clock::now();
+                  ^
+atan.cpp:84:16: error: ‘std::chrono’ has not been declared
+     end = std::chrono::system_clock::now();
+                ^
+atan.cpp:85:10: error: ‘std::chrono’ has not been declared
+     std::chrono::duration<double> diff_red = end - start;
+          ^
+atan.cpp:85:27: error: expected primary-expression before ‘double’
+     std::chrono::duration<double> diff_red = end - start;
+                           ^
+atan.cpp:85:27: error: expected ‘;’ before ‘double’
+atan.cpp:86:41: error: ‘reduction_time’ was not declared in this scope
+     std::cout << "Reduction time:\t" << reduction_time << " seconds\n";
+                                         ^
+make: *** [Makefile:15: atan.o] Error 1
+/var/spool/slurm/slurmd/state/job13047244/slurm_script: line 12: ./atan: No such file or directory
+/var/spool/slurm/slurmd/state/job13047244/slurm_script: line 12: ./atan: No such file or directory
+/var/spool/slurm/slurmd/state/job13047244/slurm_script: line 12: ./atan: No such file or directory
+/var/spool/slurm/slurmd/state/job13047244/slurm_script: line 12: ./atan: No such file or directory
+/var/spool/slurm/slurmd/state/job13047244/slurm_script: line 12: ./atan: No such file or directory
+/var/spool/slurm/slurmd/state/job13047244/slurm_script: line 12: ./atan: No such file or directory
+/var/spool/slurm/slurmd/state/job13047244/slurm_script: line 12: ./atan: No such file or directory
+rm -f atan atan.o

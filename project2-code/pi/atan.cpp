@@ -1,10 +1,9 @@
 #include <math.h>
 #include <omp.h>
 
-#include <fstream>
+#include <chrono>
 #include <iostream>
 
-#include "Stopwatch.h"
 // #include <random>
 
 // Monte Carlo integrator for a given interval with given sample count and
@@ -20,7 +19,7 @@
 //     }
 //     return sum / (double)n;
 // }
-// Haven't seen that we should use midpoint.
+// Haven't seen the hint using midpoint method
 
 // midpoint_arctan using OpenMP critical directive
 double midpoint_arctan_critical(const int &n) {
@@ -66,24 +65,24 @@ double midpoint_arctan_serial(const int &n) {
 
 int main() {
     int n = 10000;
-    Stopwatch serial, critical, reduction;
-    double ser, crit, red;
+    std::chrono::time_point<std::chrono::system_clock> start, end;
 
-    serial.start();
-    ser = midpoint_arctan_serial(n);
-    double serial_time = serial.stop();
-
-    critical.start();
+    start = std::chrono::system_clock::now();
     crit = midpoint_arctan_serial(n);
-    double critical_time = serial.stop();
+    end = std::chrono::system_clock::now();
+    std::chrono::duration<double> diff_ser = end - start;
+    std::cout << "Serial time:\t" << diff_ser << "s\n";
 
-    reduction.start();
-    red = midpoint_arctan_serial(n);
-    double reduction_time = serial.stop();
+    start = std::chrono::system_clock::now();
+    crit = midpoint_arctan_critical(n);
+    end = std::chrono::system_clock::now();
+    std::chrono::duration<double> diff_crit = end - start;
+    std::cout << "Critical time:\t" << critical_time << " seconds\n";
 
-    // Write times to console
-    std::cout << "Serial time:\t" << serial_time << " seconds";
-    std::cout << "Critical time:\t" << critical_time << " seconds";
+    start = std::chrono::system_clock::now();
+    crit = midpoint_arctan_reduction(n);
+    end = std::chrono::system_clock::now();
+    std::chrono::duration<double> diff_red = end - start;
     std::cout << "Reduction time:\t" << reduction_time << " seconds\n";
 
     return 0;

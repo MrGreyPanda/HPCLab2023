@@ -8,10 +8,10 @@ CFLAGS=-Wall -Wextra -pedantic -fopenmp
 EXEC=atan
 SRCS=atan.cpp
 OBJS=$(SRCS:.cpp=.o)
-HEADER=Stopwatch.h
+
 
 # Compilation rules
-%.o: %.cpp $(HEADER)
+%.o: %.cpp 
 	$(CXX) $(CFLAGS) -c $< -o $@
 
 $(EXEC): $(OBJS)
