@@ -1,0 +1,1 @@
+echo "Hello World, the hostname is " && hostname

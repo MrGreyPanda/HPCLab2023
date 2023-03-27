@@ -1,0 +1,13 @@
+Microarchitecture
+--------------------------
+CPU Cores: 64
+Frequency: 2.25 - 3.4 GHz
+Threads: 128
+L3 Cache: 256 MiB
+L2 Cache: 512 KiB
+L1 Cache: 32 KiB instruction + 32 KiB data
+PP: 3.4 GHz * 64 cores * 2 operations per clock cycle = 4352 GFLOPS for all cores or 68 GFLOPS for 1 core
+32 512-bit AVX-512 registers per core = 2048-bit AVX-512 registers across all 64 cores // CHATGPT!!!
+
+FMA Units: 2
+3.4 * 2 * 8 = 54.4

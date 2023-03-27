@@ -1,0 +1,36 @@
+Why is it important for data structures to aligned?
+---------------------------------------------------
+
+- If memory is aligned, more data can be fetched with a single SSE instruction, resulting in less time spent getting the data from main memory.
+
+What are some obstacles that can prevent vectorization?
+---------------------------------------------------
+- Non-contiguous memory access: If memory is accessed contiguously,
+you can get more data with a single SSE instruction, thus saving time.
+Most common case is non-unit memory strides, because those can rarely be vectorized by the compiler due to non-contiguous memory access.
+- Data dependencies: If the order seems to matter, the compiler won't vectorize, as this would reorder and therefore change the output.
+
+Is there a way to assist the compiler through language extensions?
+If yes, plese give some examples. If not, explain why not.
+---------------------------------------------------
+Yes, there are ways to assist the compiler:
+--- Pragmas ---
+- #pragma ivdep: tells the compiler that it has not to worry about data dependencies.
+- #pragma loop count (n): gives the compiler the trip count, with which he can decide if vectorization is worthwhile.
+- #pragma vector always: asks the compiler to always vectorize the following loop
+- #pragma loop align: Tells the compiler that the data of the following loop is aligned (16 Byte for Intel SSE instruciton)
+- #pragma novector: tells the compiler to not vectorize the following loop
+- #pragma vector nontemporal: Tells the compiler that the data will not be reused, therefore cache bypassing is possible
+
+--- Keywords ---
+- restrict: needs compiler flags [Q]restrict or [Q]std=c99 to be used. Then it asserts that the word referenced by a pointer is not aliased. 
+
+--- Options/Switches ---
+- Disambiguation of pointers: Telling the compiler that the same memory location is not accessed via different arrays or pointers
+- Interprocedural Optimization (IPO)
+- High-level optimization (HPO)
+
+Which loop optimizations are performed by the compiler in order to vectorise and pipeline loops?
+---------------------------------------------------
+- Reordering
+- Using accessible registers to perform multiple operations

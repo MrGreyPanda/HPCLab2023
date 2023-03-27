@@ -1,0 +1,22 @@
+# Makefile for atan.cpp
+
+# Compiler specifications
+CXX=g++
+CFLAGS=-Wall -Wextra -pedantic -fopenmp
+
+# File names
+EXEC=atan
+SRCS=atan.cpp
+OBJS=$(SRCS:.cpp=.o)
+HEADER=Stopwatch.h
+
+# Compilation rules
+%.o: %.cpp $(HEADER)
+	$(CXX) $(CFLAGS) -c $< -o $@
+
+$(EXEC): $(OBJS)
+	$(CXX) $(CFLAGS) $(OBJS) -o $(EXEC)
+
+# Clean command
+clean:
+	rm -f $(EXEC) $(OBJS)
