@@ -9,12 +9,12 @@
 
 // Critical based implementation
 double midpoint_arctan_critical(const int &n) {
-    double h = 1.0 / n;
+    const double h = 1.0 / n;
     double sum = 0.0;
 
-#pragma omp parallel
+    double local_sum = 0.0;
+#pragma omp parallel firstprivate(local_sum)
     {
-        double local_sum = 0.0;
 #pragma omp for
         for (int i = 0; i < n; i++) {
             double x_mid = (i + 0.5) * h;
@@ -29,7 +29,7 @@ double midpoint_arctan_critical(const int &n) {
 
 // Reduction based parallel implementation
 double midpoint_arctan_reduction(const int &n) {
-    double h = 1.0 / n;
+    const double h = 1.0 / n;
     double sum = 0.0;
 
 #pragma omp parallel for reduction(+ : sum)
@@ -43,7 +43,7 @@ double midpoint_arctan_reduction(const int &n) {
 
 // Serial implementation
 double midpoint_arctan_serial(const int &n) {
-    double h = 1.0 / n;
+    const double h = 1.0 / n;
     double sum = 0.0;
 
     for (int i = 0; i < n; i++) {
@@ -54,15 +54,19 @@ double midpoint_arctan_serial(const int &n) {
     return sum * h * 4.0;
 }
 
-int main() {
+int main(int argc, char **argv) {
     // IO-Handling
     int n;
-    std::cin >> n;
-    // strong or weak scaling (0 = strong, 1 = weak)
-    int s_w;
-    std::cin >> s_w;
+    n = atoi(argv[1]);
 
-    // double rel_err = 1e-6;
+    // std::cout << n << "\n";
+    // strong or weak scaling (0 = strong, 1 = weak, 2 = time)
+    int s_w;
+    // std::cin >> s_w;
+    s_w = atoi(argv[2]);
+    double ser = 0, red = 0, crit = 0;
+
+    double abs_err = 1e-6;
     int n_threads = omp_get_max_threads();
 
     std::chrono::time_point<std::chrono::system_clock> start, end;
@@ -74,46 +78,58 @@ int main() {
 
     // Using Serial Implementation
     std::chrono::duration<double> s_time;
-    for (int i = 0; i < 1000; i++) {
-        start = std::chrono::system_clock::now();
-        midpoint_arctan_serial(n);
-        end = std::chrono::system_clock::now();
-        s_time += end - start;
+    start = std::chrono::system_clock::now();
+    for (int i = 0; i < iterations; i++) {
+        ser += midpoint_arctan_serial(n);
     }
+    end = std::chrono::system_clock::now();
+    s_time = end - start;
     s_time /= iterations;
+    ser /= iterations;
+    assert(abs(M_PI - ser) < abs_err);
 
     // Using Critical parallelization
-    std::chrono::duration<double> c_time = end - start;
+    std::chrono::duration<double> c_time;
+    start = std::chrono::system_clock::now();
     for (int i = 0; i < iterations; i++) {
-        start = std::chrono::system_clock::now();
-        midpoint_arctan_critical(n);
-        end = std::chrono::system_clock::now();
-        c_time += end - start;
+        crit += midpoint_arctan_critical(n);
     }
+    end = std::chrono::system_clock::now();
+    c_time = end - start;
     c_time /= iterations;
+    crit /= iterations;
+    assert(abs(crit - M_PI) < abs_err);
 
     // Using Reduction parallelization
     std::chrono::duration<double> r_time;
+    start = std::chrono::system_clock::now();
     for (int i = 0; i < iterations; i++) {
-        start = std::chrono::system_clock::now();
-        midpoint_arctan_reduction(n);
-        end = std::chrono::system_clock::now();
-        r_time += end - start;
+        red += midpoint_arctan_reduction(n);
     }
+    end = std::chrono::system_clock::now();
+    r_time = end - start;
     r_time /= iterations;
+    red /= iterations;
+    assert(abs(red - M_PI) < abs_err);
 
     // weak Scaling
     if (s_w == 1) {
-        std::cout << n_threads << "," << s_time.count() / s_time.count() << ","
-                  << s_time.count() / c_time.count() << ","
-                  << s_time.count() / r_time.count() << "\n";
+        std::cout << n_threads << ","
+                  << "1"
+                  << "," << (s_time.count() / c_time.count()) / n_threads
+                  << "," << (s_time.count() / r_time.count()) / n_threads
+                  << "\n";
     }
 
     // strong Scaling
-    else {
-        std::cout << n_threads << "," << s_time.count() / s_time.count() << ","
-                  << s_time.count() / c_time.count() << ","
-                  << s_time.count() / r_time.count() << "\n";
+    else if (s_w == 0) {
+        std::cout << n_threads << ","
+                  << "1"
+                  << "," << s_time.count() / c_time.count() << ","
+                  << (s_time.count() / r_time.count()) << "\n";
+    } else {
+        std::cout << n_threads << "," << s_time.count() << ","
+                  << c_time.count() << "," << r_time.count() << "\n";
     }
     return 0;
 }
