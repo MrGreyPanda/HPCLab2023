@@ -67,9 +67,9 @@ int main(int argc, char **argv) {
     // print benchmark data
     printf("Total time:                 %g millisconds\n",
            (nTimeEnd - nTimeStart) / 1000.0);
-    printf("Image size:                 %ld x %ld = %ld Pixels\n",
-           (long)IMAGE_WIDTH, (long)IMAGE_HEIGHT,
-           (long)(IMAGE_WIDTH * IMAGE_HEIGHT));
+    //     printf("Image size:                 %ld x %ld = %ld Pixels\n",
+    //            (long)IMAGE_WIDTH, (long)IMAGE_HEIGHT,
+    //            (long)(IMAGE_WIDTH * IMAGE_HEIGHT));
     printf("Total number of iterations: %ld\n", nTotalIterationsCount);
     printf("Avg. time per pixel:        %g microseconds\n",
            (nTimeEnd - nTimeStart) / (double)(IMAGE_WIDTH * IMAGE_HEIGHT));

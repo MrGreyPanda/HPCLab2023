@@ -99,7 +99,7 @@ int main(int argc, char **argv) {
 
     // print_list(data, length);
 
-    printf("%d,%e\n", length, time);
+    printf("%d,%e,%d\n", length, time, omp_get_max_threads());
 
     if (check(data, length) != 0) {
         printf("Quicksort incorrect.\n");

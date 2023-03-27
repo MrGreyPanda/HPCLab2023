@@ -15,7 +15,12 @@ unsigned long get_time() {
 }
 
 int main(int argc, char **argv) {
-    png_data *pPng = png_create(IMAGE_WIDTH, IMAGE_HEIGHT);
+    png_data *pPng;
+    int writing = 0;
+    // writing = atoi(argv[1]);
+    if (writing > 0) {
+        pPng = png_create(IMAGE_WIDTH, IMAGE_HEIGHT);
+    }
 
     double x, y, x2, y2, cx, cy;
 
@@ -57,8 +62,10 @@ int main(int argc, char **argv) {
                 // n indicates if the point belongs to the mandelbrot set
                 // plot the number of iterations at point (i, j)
                 int c = ((long)n * 255) / MAX_ITERS;
+                if (writing > 0) {
 #pragma omp critical
-                png_plot(pPng, i, j, c, c, c);
+                    png_plot(pPng, i, j, c, c, c);
+                }
             }
         }
     }
@@ -81,6 +88,8 @@ int main(int argc, char **argv) {
     printf("MFlop/s:                    %g\n",
            nTotalIterationsCount * 8.0 / (double)(nTimeEnd - nTimeStart));
 
-    png_write(pPng, "mandel.png");
+    if (writing > 1) {
+        png_write(pPng, "mandel.png");
+    }
     return 0;
 }
