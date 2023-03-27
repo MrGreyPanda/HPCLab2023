@@ -4,24 +4,6 @@
 #include <chrono>
 #include <iostream>
 
-// #include <random>
-
-// Monte Carlo integrator for a given interval with given sample count and
-// function
-// double integrate(std::function<double(double)> func, const int &n,
-//                  const double &low, const double &high) {
-//     std::random_device rd;
-//     std::mt19937 gen(rd());
-//     std::uniform_real_distribution<> distr(low, high);
-//     double sum = 0.0;
-//     for (int i = 0; i < n; i++) {
-//         sum += func(distr(gen));
-//     }
-//     return sum / (double)n;
-// }
-// Haven't seen the hint using midpoint method
-
-// midpoint_arctan using OpenMP critical directive
 double midpoint_arctan_critical(const int &n) {
     double delta_x = 1.0 / n;
     double sum = 0.0;
@@ -37,7 +19,6 @@ double midpoint_arctan_critical(const int &n) {
     return sum / n;
 }
 
-// midpoint_arctan using OpenMP reduction clause
 double midpoint_arctan_reduction(const int &n) {
     double delta_x = 1.0 / n;
     double sum = 0.0;
@@ -68,22 +49,22 @@ int main() {
     std::chrono::time_point<std::chrono::system_clock> start, end;
 
     start = std::chrono::system_clock::now();
-    crit = midpoint_arctan_serial(n);
+    double ser = midpoint_arctan_serial(n);
     end = std::chrono::system_clock::now();
     std::chrono::duration<double> diff_ser = end - start;
-    std::cout << "Serial time:\t" << diff_ser << "s\n";
+    std::cout << "Serial time:\t" << diff_ser.count() << "s\n";
 
     start = std::chrono::system_clock::now();
-    crit = midpoint_arctan_critical(n);
+    double crit = midpoint_arctan_critical(n);
     end = std::chrono::system_clock::now();
     std::chrono::duration<double> diff_crit = end - start;
-    std::cout << "Critical time:\t" << critical_time << " seconds\n";
+    std::cout << "Critical time:\t" << diff_crit.count() << " seconds\n";
 
     start = std::chrono::system_clock::now();
-    crit = midpoint_arctan_reduction(n);
+    double red = midpoint_arctan_reduction(n);
     end = std::chrono::system_clock::now();
     std::chrono::duration<double> diff_red = end - start;
-    std::cout << "Reduction time:\t" << reduction_time << " seconds\n";
+    std::cout << "Reduction time:\t" << diff_red.count() << " seconds\n";
 
     return 0;
 }
