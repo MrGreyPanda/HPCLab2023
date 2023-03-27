@@ -11,13 +11,13 @@ problemsize=10000000
 (for i in 1 2 4 8 16 24 32 48
 do
     export OMP_NUM_THREADS=$i
-	./atan problemsize
+	./atan problemsize 0
 done) >> speedup.csv
 
 (for i in 1 2 4 8 16 24 32 48
 do
     export OMP_NUM_THREADS=$i
-    ./atan problemsize*i
+    ./atan problemsize*i 1
 done) >> weak.csv
 
 

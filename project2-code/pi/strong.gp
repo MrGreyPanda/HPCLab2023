@@ -12,7 +12,7 @@ set ylabel "Speedup"
 
 set key inside right
 
-plot 'strong.csv' using 1:2 with linespoints title "Serial", \
+plot 'speedup.csv' using 1:2 with linespoints title "Serial", \
      '' using 1:3 with linespoints title "Parallel Critical", \
      '' using 1:4 with linespoints title "Parallel Reduction"
 

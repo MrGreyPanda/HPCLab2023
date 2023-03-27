@@ -58,6 +58,10 @@ int main() {
     // IO-Handling
     int n;
     std::cin >> n;
+    // strong or weak scaling (0 = strong, 1 = weak)
+    int s_w;
+    std::cin >> s_w;
+
     // double rel_err = 1e-6;
     int n_threads = omp_get_max_threads();
 
@@ -98,8 +102,18 @@ int main() {
     }
     r_time /= iterations;
 
-    std::cout << n_threads << "," << s_time.count() << "," << c_time.count()
-              << "," << r_time.count() << "\n";
+    // weak Scaling
+    if (s_w == 1) {
+        std::cout << n_threads << "," << s_time.count() / s_time.count() << ","
+                  << c_time.count() / s_time.count() << ","
+                  << r_time.count() / s_time.count() << "\n";
+    }
 
+    // strong Scaling
+    else {
+        std::cout << n_threads << "," << s_time.count() / s_time.count() << ","
+                  << c_time.count() / s_time.count() << ","
+                  << r_time.count() / s_time.count() << "\n";
+    }
     return 0;
 }
