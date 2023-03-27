@@ -43,14 +43,17 @@ void quicksort(double *data, int length) {
         data[right] = pivot;
     }
 
-// print_list(data, length);
+    // print_list(data, length);
 
-/* Parallel recursion */
-#pragma omp task
-    quicksort(data, right);
-#pragma omp task
-    quicksort(&(data[left]), length - left);
-#pragma omp taskwait
+    if (length < 100000) {
+        quicksort(data, right);
+        quicksort(&(data[left]), length - left);
+    } else {
+#pragma omp task default(shared)
+        { quicksort(data, right); }
+#pragma omp task default(shared)
+        { quicksort(&(data[left]), length - left); }
+    }
 }
 
 int check(double *data, int length) {
@@ -98,8 +101,18 @@ int main(int argc, char **argv) {
     double time = stopwatch.stop();
 
     // print_list(data, length);
-
-    printf("%d,%e,%d\n", length, time, omp_get_max_threads());
+    double x = 0;
+    if (length == 10000)
+        x = 1.557403e-03 / time;
+    else if (length == 100000)
+        x = 1.610007e-02 / time;
+    else if (length == 1000000)
+        x = 1.836374e-01 / time;
+    else if (length == 10000000)
+        x = 1.941233e+00 / time;
+    else
+        x = 0;
+    printf("%d,%e,%d,%d,%e\n", length, time, omp_get_max_threads(), x);
 
     if (check(data, length) != 0) {
         printf("Quicksort incorrect.\n");
