@@ -26,7 +26,7 @@ done) >> strong.csv
 (for i in 1 2 4 8 16 24 32
 do
     export OMP_NUM_THREADS=$i
-    ./atan $problemsize*i 1
+    ./atan $((problemsize * i)) 1
 done) >> weak.csv
 
 gnuplot strong.gp

@@ -45,9 +45,9 @@ void quicksort(double *data, int length) {
 // print_list(data, length);
 
 /* recursion */
-#pragma omp task shared(data)
+#pragma omp task firstprivate(data [0:length], left, right)
     quicksort(data, right);
-#pragma omp task shared(data)
+#pragma omp task firstprivate(data [left:length], left, right)
     quicksort(&(data[left]), length - left);
 }
 
@@ -67,7 +67,7 @@ int main(int argc, char **argv) {
     int i, j, k;
 
     length = 10000000;
-    if (argc > 1) {
+    if (argc >= 1) {
         length = atoi(argv[1]);
     }
 
@@ -89,11 +89,10 @@ int main(int argc, char **argv) {
     // print_list(data, length);
 
 #pragma omp parallel
-    {
 #pragma omp single
-        quicksort(data, length);
-#pragma omp taskwait
-    }
+#pragma omp task untied shared(data)
+    quicksort(data, length);
+
     double time = stopwatch.stop();
 
     // print_list(data, length);
