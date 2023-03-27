@@ -2,6 +2,7 @@
  * Quicksort implementation for practical course
  **/
 
+#include <omp.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -44,11 +45,12 @@ void quicksort(double *data, int length) {
 
 // print_list(data, length);
 
-/* recursion */
-#pragma omp task firstprivate(data [0:length], left, right)
+/* Parallel recursion */
+#pragma omp task
     quicksort(data, right);
-#pragma omp task firstprivate(data [left:length], left, right)
+#pragma omp task
     quicksort(&(data[left]), length - left);
+#pragma omp taskwait
 }
 
 int check(double *data, int length) {
@@ -67,7 +69,7 @@ int main(int argc, char **argv) {
     int i, j, k;
 
     length = 10000000;
-    if (argc >= 1) {
+    if (argc > 1) {
         length = atoi(argv[1]);
     }
 
@@ -89,15 +91,15 @@ int main(int argc, char **argv) {
     // print_list(data, length);
 
 #pragma omp parallel
+    {
 #pragma omp single
-#pragma omp task untied shared(data)
-    quicksort(data, length);
-
+        quicksort(data, length);
+    }
     double time = stopwatch.stop();
 
     // print_list(data, length);
 
-    printf("%d,%e \n", length, time);
+    printf("%d,%e\n", length, time);
 
     if (check(data, length) != 0) {
         printf("Quicksort incorrect.\n");
