@@ -2,16 +2,19 @@
 #SBATCH --cpus-per-task=48
 #SBATCH --output=fisher-%j.out
 
+# Load needed modules
+module load gcc python
 
 # Run makefile
 make
 
-for threads in 1 2 4 8 16 24 
+for problemsize in 128 256 512 1028
 do
-    export OMP_NUM_THREADS=$threads
-    for problemsize in 64 128 256 512 1028
+    for threads in 1 2 4 8 16 24 
     do
-        ./main $problemsize 100 0.005 >> stat_output.csv
+        export OMP_NUM_THREADS=$threads
+        ./main $problemsize 150 0.005 >> stat_output.csv
     done
-    printf("\n)" >> stat_output.csv 
 done
+
+make clean

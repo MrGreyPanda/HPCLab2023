@@ -41,7 +41,6 @@ void diffusion(const data::Field &s, data::Field &f) {
 #pragma omp for collapse(2) nowait
         for (int j = 1; j < jend; j++) {
             for (int i = 1; i < iend; i++) {
-                // TODO
                 f(i, j) = -(4. + alpha) * s(i, j) + s(i - 1, j) + s(i + 1, j) +
                           s(i, j - 1) + s(i, j + 1) + alpha * y_old(i, j) +
                           beta * s(i, j) * (1. - s(i, j));
@@ -73,7 +72,7 @@ void diffusion(const data::Field &s, data::Field &f) {
         // the north boundary (plus NE and NW corners)
         {
             int j1 = nx - 1;
-#pragma omp single
+#pragma omp single nowait
             {
                 int i = 0;  // NW corner
                 f(i, j1) = -(4. + alpha) * s(i, j1) + s(i + 1, j1) +

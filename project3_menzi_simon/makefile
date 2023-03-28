@@ -50,4 +50,5 @@ clean:
 	rm -f *.i
 	rm -f *.lst
 	rm -f output.*
+	rm -f fisher-1*
 
