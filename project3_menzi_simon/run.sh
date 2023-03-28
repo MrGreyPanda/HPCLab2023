@@ -6,7 +6,6 @@
 # Run makefile
 make
 
-"" > stat_output.csv
 for threads in 1 2 4 8 16 24 
 do
     export OMP_NUM_THREADS=$threads

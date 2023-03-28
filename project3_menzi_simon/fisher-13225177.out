@@ -1,0 +1,9 @@
+make: Nothing to be done for 'all'.
+/var/spool/slurm/slurmd/state/job13225177/slurm_script: line 16: \n: command not found
+ERROR: CG failed to converge
+step 1 ERROR : nonlinear iterations failed to converge
+/var/spool/slurm/slurmd/state/job13225177/slurm_script: line 16: \n: command not found
+/var/spool/slurm/slurmd/state/job13225177/slurm_script: line 16: \n: command not found
+/var/spool/slurm/slurmd/state/job13225177/slurm_script: line 16: \n: command not found
+/var/spool/slurm/slurmd/state/job13225177/slurm_script: line 16: \n: command not found
+/var/spool/slurm/slurmd/state/job13225177/slurm_script: line 16: \n: command not found
