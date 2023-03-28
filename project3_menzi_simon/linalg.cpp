@@ -62,7 +62,7 @@ double hpc_dot(Field const& x, Field const& y, const int N) {
 double hpc_norm2(Field const& x, const int N) {
     double result = 0;
 
-    // TODO
+// TODO
 #pragma omp parallel for reduction(+ : result)
     for (int i = 0; i < N; i++) {
         result += x[i] * x[i];
@@ -75,8 +75,8 @@ double hpc_norm2(Field const& x, const int N) {
 // x is a vector on length N
 // value is a scalar
 void hpc_fill(Field& x, const double value, const int N) {
-    // TODO
-#pragma omp parallel for
+// TODO
+#pragma omp parallel for simd
     for (int i = 0; i < N; i++) {
         x[i] = value;
     }
@@ -90,8 +90,8 @@ void hpc_fill(Field& x, const double value, const int N) {
 // x and y are vectors on length N
 // alpha is a scalar
 void hpc_axpy(Field& y, const double alpha, Field const& x, const int N) {
-    // TODO
-#pragma omp parallel for
+// TODO
+#pragma omp parallel for simd
     for (int i = 0; i < N; i++) {
         y[i] += alpha * x[i];
     }
@@ -102,8 +102,8 @@ void hpc_axpy(Field& y, const double alpha, Field const& x, const int N) {
 // alpha is a scalar
 void hpc_add_scaled_diff(Field& y, Field const& x, const double alpha,
                          Field const& l, Field const& r, const int N) {
-    // TODO
-#pragma omp parallel for
+// TODO
+#pragma omp parallel for simd
     for (int i = 0; i < N; i++) {
         y[i] = x[i] + alpha * (l[i] - r[i]);
     }
@@ -114,8 +114,8 @@ void hpc_add_scaled_diff(Field& y, Field const& x, const double alpha,
 // alpha is a scalar
 void hpc_scaled_diff(Field& y, const double alpha, Field const& l,
                      Field const& r, const int N) {
-    // TODO
-#pragma omp parallel for
+// TODO
+#pragma omp parallel for simd
     for (int i = 0; i < N; i++) {
         y[i] = alpha * (l[i] - r[i]);
     }
@@ -126,7 +126,7 @@ void hpc_scaled_diff(Field& y, const double alpha, Field const& l,
 // y and x are vectors on length n
 void hpc_scale(Field& y, const double alpha, Field& x, const int N) {
 // TODO
-#pragma omp parallel for
+#pragma omp parallel for simd
     for (int i = 0; i < N; i++) {
         y[i] = alpha * x[i];
     }
@@ -137,8 +137,8 @@ void hpc_scale(Field& y, const double alpha, Field& x, const int N) {
 // y, x and z are vectors on length n
 void hpc_lcomb(Field& y, const double alpha, Field& x, const double beta,
                Field const& z, const int N) {
-    // TODO
-#pragma omp parallel for
+// TODO
+#pragma omp parallel for simd
     for (int i = 0; i < N; i++) {
         y[i] = alpha * x[i] + beta * z[i];
     }
@@ -147,8 +147,8 @@ void hpc_lcomb(Field& y, const double alpha, Field& x, const double beta,
 // copy one vector into another y := x
 // x and y are vectors of length N
 void hpc_copy(Field& y, Field const& x, const int N) {
-    // TODO
-#pragma omp parallel for
+// TODO
+#pragma omp parallel for simd
     for (int i = 0; i < N; i++) {
         y[i] = x[i];
     }
