@@ -28,25 +28,28 @@ void diffusion(const data::Field &s, data::Field &f) {
 
     using data::y_old;
 
-    double alpha = options.alpha;
-    double beta = options.beta;
+    const double alpha = options.alpha;
+    const double beta = options.beta;
 
-    int nx = options.nx;
-    int iend = nx - 1;
-    int jend = nx - 1;
+    const int nx = options.nx;
+    const int iend = nx - 1;
+    const int jend = nx - 1;
 
-    // the interior grid points
+#pragma omp parallel
+{
+// the interior grid points
+#pragma omp for collapse(2) nowait
     for (int j = 1; j < jend; j++) {
         for (int i = 1; i < iend; i++) {
             // TODO
-            //  f(i,j) = ...
             f(i, j) = -(4. + alpha) * s(i, j) + s(i - 1, j) + s(i + 1, j) +
                       s(i, j - 1) + s(i, j + 1) + alpha * y_old(i, j) +
                       beta * s(i, j) * (1. - s(i, j));
         }
     }
 
-    // the east boundary
+// the east boundary
+#pragma omp single nowait
     {
         int i = nx - 1;
         for (int j = 1; j < jend; j++) {
@@ -56,7 +59,8 @@ void diffusion(const data::Field &s, data::Field &f) {
         }
     }
 
-    // the west boundary
+// the west boundary
+#pragma omp single nowait
     {
         int i = 0;
         // TODO
@@ -70,7 +74,7 @@ void diffusion(const data::Field &s, data::Field &f) {
     // the north boundary (plus NE and NW corners)
     {
         int j = nx - 1;
-
+#pragma omp single nowait
         {
             int i = 0;  // NW corner
             f(i, j) = -(4. + alpha) * s(i, j) + s(i + 1, j) + s(i, j - 1) +
@@ -80,12 +84,13 @@ void diffusion(const data::Field &s, data::Field &f) {
 
         // inner north boundary
         // TODO
+#pragma omp for nowait
         for (int i = 1; i < iend; i++) {
             f(i, j) = -(4. + alpha) * s(i, j) + s(i + 1, j) + s(i - 1, j) +
                       s(i, j - 1) + alpha * y_old(i, j) + bndN[i] +
                       beta * s(i, j) * (1. - s(i, j));
         }
-
+#pragma omp  nowait
         {
             int i = nx - 1;  // NE corner
             f(i, j) = -(4. + alpha) * s(i, j) + s(i - 1, j) + s(i, j - 1) +
@@ -97,7 +102,7 @@ void diffusion(const data::Field &s, data::Field &f) {
     // the south boundary
     {
         int j = 0;
-
+#pragma omp single nowait
         {
             int i = 0;  // SW corner
             f(i, j) = -(4. + alpha) * s(i, j) + s(i + 1, j) + s(i, j + 1) +
@@ -105,14 +110,15 @@ void diffusion(const data::Field &s, data::Field &f) {
                       beta * s(i, j) * (1.0 - s(i, j));
         }
 
-        // inner south boundary
-        // TODO
+// inner south boundary
+// TODO
+#pragma omp for nowait
         for (int i = 1; i < iend; i++) {
             f(i, j) = -(4. + alpha) * s(i, j) + s(i + 1, j) + s(i - 1, j) +
                       s(i, j + 1) + alpha * y_old(i, j) + bndS[i] +
                       beta * s(i, j) * (1.0 - s(i, j));
         }
-
+#pragma omp single nowait
         {
             int i = nx - 1;  // SE corner
             f(i, j) = -(4. + alpha) * s(i, j) + s(i - 1, j) + s(i, j + 1) +
@@ -120,12 +126,13 @@ void diffusion(const data::Field &s, data::Field &f) {
                       beta * s(i, j) * (1.0 - s(i, j));
         }
     }
-
-    // Accumulate the flop counts
-    // 8 ops total per point
-    stats::flops_diff += +12 * (nx - 2) * (nx - 2)  // interior points
-                         + 11 * (nx - 2 + nx - 2)   // NESW boundary points
-                         + 11 * 4;                  // corner points
 }
+
+// Accumulate the flop counts
+// 8 ops total per point
+stats::flops_diff += +12 * (nx - 2) * (nx - 2)  // interior points
+                     + 11 * (nx - 2 + nx - 2)   // NESW boundary points
+                     + 11 * 4;                  // corner points
+}  // namespace operators
 
 }  // namespace operators
