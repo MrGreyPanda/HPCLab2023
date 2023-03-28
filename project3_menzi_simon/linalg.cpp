@@ -64,7 +64,7 @@ double hpc_norm2(Field const& x, const int N) {
 
     // TODO
     for (int i = 0; i != N; i++) {
-        result += x[i];
+        result += x[i] * x[i];
     }
 
     return sqrt(result);
@@ -101,7 +101,7 @@ void hpc_add_scaled_diff(Field& y, Field const& x, const double alpha,
                          Field const& l, Field const& r, const int N) {
     // TODO
     for (int i = 0; i != N; i++) {
-        y(j) = x(i) + alpha * (l(i) - r(j));
+        y[i] = x[i] + alpha * (l[i] - r[i]);
     }
 }
 
@@ -112,7 +112,7 @@ void hpc_scaled_diff(Field& y, const double alpha, Field const& l,
                      Field const& r, const int N) {
     // TODO
     for (int i = 0; i != N; i++) {
-        y(i) = alpha * (l(i) - r(i));
+        y[i] = alpha * (l[i] - r[i]);
     }
 }
 
@@ -122,7 +122,7 @@ void hpc_scaled_diff(Field& y, const double alpha, Field const& l,
 void hpc_scale(Field& y, const double alpha, Field& x, const int N) {
     // TODO
     for (int i = 0; i != N; i++) {
-        y(i) = alpha * x(i);
+        y[i] = alpha * x[i];
     }
 }
 
@@ -133,7 +133,7 @@ void hpc_lcomb(Field& y, const double alpha, Field& x, const double beta,
                Field const& z, const int N) {
     // TODO
     for (int i = 0; i != N; i++) {
-        y(i) = alpha * x(i) + beta * z(i);
+        y[i] = alpha * x[i] + beta * z[i];
     }
 }
 
@@ -141,8 +141,8 @@ void hpc_lcomb(Field& y, const double alpha, Field& x, const double beta,
 // x and y are vectors of length N
 void hpc_copy(Field& y, Field const& x, const int N) {
     // TODO
-    for (int i != 0; i y) {
-        y(i) = x(i);
+    for (int i = 0; i != N; i++) {
+        y[i] = x[i];
     }
 }
 

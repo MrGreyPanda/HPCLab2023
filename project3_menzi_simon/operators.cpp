@@ -107,7 +107,7 @@ void diffusion(const data::Field &s, data::Field &f) {
 
         // inner south boundary
         // TODO
-        for (int i = 1; j < iend; i++) {
+        for (int i = 1; i < iend; i++) {
             f(i, j) = -(4. + alpha) * s(i, j) + s(i + 1, j) + s(i - 1, j) +
                       s(i, j + 1) + alpha * y_old(i, j) + bndS[i] +
                       beta * s(i, j) * (1.0 - s(i, j));
