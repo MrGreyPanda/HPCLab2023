@@ -1,15 +1,15 @@
 // linear algebra subroutines
 // Ben Cumming @ CSCS
 
-#include <iostream>
+#include "linalg.h"
 
 #include <cmath>
 #include <cstdio>
+#include <iostream>
 
-#include "linalg.h"
+#include "data.h"
 #include "operators.h"
 #include "stats.h"
-#include "data.h"
 
 namespace linalg {
 
@@ -31,15 +31,14 @@ using data::Field;
 // to the CG solver. This is useful if we want to avoid malloc/free calls
 // on the device for the OpenACC implementation (feel free to suggest a better
 // method for doing this)
-void cg_init(int nx)
-{
-    Ap.init(nx,nx);
-    r.init(nx,nx);
-    p.init(nx,nx);
-    Fx.init(nx,nx);
-    Fxold.init(nx,nx);
-    v.init(nx,nx);
-    xold.init(nx,nx);
+void cg_init(int nx) {
+    Ap.init(nx, nx);
+    r.init(nx, nx);
+    p.init(nx, nx);
+    Fx.init(nx, nx);
+    Fxold.init(nx, nx);
+    v.init(nx, nx);
+    xold.init(nx, nx);
 
     cg_initialized = true;
 }
@@ -50,23 +49,23 @@ void cg_init(int nx)
 
 // computes the inner product of x and y
 // x and y are vectors on length N
-double hpc_dot(Field const& x, Field const& y, const int N)
-{
+double hpc_dot(Field const& x, Field const& y, const int N) {
     double result = 0;
 
-    for (int i = 0; i < N; i++)
-        result += x[i] * y[i];
+    for (int i = 0; i < N; i++) result += x[i] * y[i];
 
     return result;
 }
 
 // computes the 2-norm of x
 // x is a vector on length N
-double hpc_norm2(Field const& x, const int N)
-{
+double hpc_norm2(Field const& x, const int N) {
     double result = 0;
 
-    //TODO
+    // TODO
+    for (int i = 0; i != N; i++) {
+        result += x[i];
+    }
 
     return sqrt(result);
 }
@@ -74,10 +73,11 @@ double hpc_norm2(Field const& x, const int N)
 // sets entries in a vector to value
 // x is a vector on length N
 // value is a scalar
-void hpc_fill(Field& x, const double value, const int N)
-{
-    //TODO
-
+void hpc_fill(Field& x, const double value, const int N) {
+    // TODO
+    for (int i = 0; i != N; i++) {
+        x[i] = value;
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -87,76 +87,86 @@ void hpc_fill(Field& x, const double value, const int N)
 // computes y := alpha*x + y
 // x and y are vectors on length N
 // alpha is a scalar
-void hpc_axpy(Field& y, const double alpha, Field const& x, const int N)
-{
-    //TODO
+void hpc_axpy(Field& y, const double alpha, Field const& x, const int N) {
+    // TODO
+    for (int i = 0; i != N; i++) {
+        y[i] += alpha * x[i];
+    }
 }
 
 // computes y = x + alpha*(l-r)
 // y, x, l and r are vectors of length N
 // alpha is a scalar
 void hpc_add_scaled_diff(Field& y, Field const& x, const double alpha,
-    Field const& l, Field const& r, const int N)
-{
-    //TODO
+                         Field const& l, Field const& r, const int N) {
+    // TODO
+    for (int i = 0; i != N; i++) {
+        y(j) = x(i) + alpha * (l(i) - r(j));
+    }
 }
 
 // computes y = alpha*(l-r)
 // y, l and r are vectors of length N
 // alpha is a scalar
-void hpc_scaled_diff(Field& y, const double alpha,
-    Field const& l, Field const& r, const int N)
-{
-    //TODO
+void hpc_scaled_diff(Field& y, const double alpha, Field const& l,
+                     Field const& r, const int N) {
+    // TODO
+    for (int i = 0; i != N; i++) {
+        y(i) = alpha * (l(i) - r(i));
+    }
 }
 
 // computes y := alpha*x
 // alpha is scalar
 // y and x are vectors on length n
-void hpc_scale(Field& y, const double alpha, Field& x, const int N)
-{
-    //TODO
+void hpc_scale(Field& y, const double alpha, Field& x, const int N) {
+    // TODO
+    for (int i = 0; i != N; i++) {
+        y(i) = alpha * x(i);
+    }
 }
 
 // computes linear combination of two vectors y := alpha*x + beta*z
 // alpha and beta are scalar
 // y, x and z are vectors on length n
 void hpc_lcomb(Field& y, const double alpha, Field& x, const double beta,
-    Field const& z, const int N)
-{
-    //TODO
+               Field const& z, const int N) {
+    // TODO
+    for (int i = 0; i != N; i++) {
+        y(i) = alpha * x(i) + beta * z(i);
+    }
 }
 
 // copy one vector into another y := x
 // x and y are vectors of length N
-void hpc_copy(Field& y, Field const& x, const int N)
-{
-    //TODO
+void hpc_copy(Field& y, Field const& x, const int N) {
+    // TODO
+    for (int i != 0; i y) {
+        y(i) = x(i);
+    }
 }
 
 // conjugate gradient solver
 // solve the linear system A*x = b for x
-// the matrix A is implicit in the objective function for the diffusion equation
-// the value in x constitute the "first guess" at the solution
-// x(N)
-// ON ENTRY contains the initial guess for the solution
-// ON EXIT  contains the solution
-void hpc_cg(Field& x, Field const& b, const int maxiters, const double tol, bool& success)
-{
+// the matrix A is implicit in the objective function for the diffusion
+// equation the value in x constitute the "first guess" at the solution
+// x(N) ON ENTRY contains the initial guess for the solution ON EXIT
+// contains the solution
+void hpc_cg(Field& x, Field const& b, const int maxiters, const double tol,
+            bool& success) {
     // this is the dimension of the linear system that we are to solve
     using data::options;
     int N = options.N;
     int nx = options.nx;
 
-    if (!cg_initialized)
-        cg_init(nx);
+    if (!cg_initialized) cg_init(nx);
 
     // epslion value use for matrix-vector approximation
-    double eps     = 1.e-8;
+    double eps = 1.e-8;
     double eps_inv = 1. / eps;
 
     // allocate memory for temporary storage
-    hpc_fill(Fx,    0.0, N);
+    hpc_fill(Fx, 0.0, N);
     hpc_fill(Fxold, 0.0, N);
     hpc_copy(xold, x, N);
 
@@ -185,14 +195,13 @@ void hpc_cg(Field& x, Field const& b, const int maxiters, const double tol, bool
 
     // check for convergence
     success = false;
-    if (sqrt(r_old_inner) < tol)
-    {
+    if (sqrt(r_old_inner) < tol) {
         success = true;
         return;
     }
 
     int iter;
-    for(iter=0; iter<maxiters; iter++) {
+    for (iter = 0; iter < maxiters; iter++) {
         // Ap = A*p
         hpc_lcomb(v, 1.0, xold, eps, p, N);
         diffusion(v, Fx);
@@ -223,8 +232,7 @@ void hpc_cg(Field& x, Field const& b, const int maxiters, const double tol, bool
     }
     stats::iters_cg += iter + 1;
 
-    if (!success)
-        std::cerr << "ERROR: CG failed to converge" << std::endl;
+    if (!success) std::cerr << "ERROR: CG failed to converge" << std::endl;
 }
 
-} // namespace linalg
+}  // namespace linalg
