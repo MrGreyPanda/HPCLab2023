@@ -7,7 +7,8 @@ df = pd.read_csv("strong_output.csv", index_col=False)
 # Strong scaling plot
 threads = pd.unique(df["threads"])
 sizes = pd.unique(df["size"])
-runtimes = df["runtime"]
+runtimes = df[:,2:].mean(axis=1)
+
 # print(runtimes, threads, sizes)
 
 plt.title('Strong Scaling')
