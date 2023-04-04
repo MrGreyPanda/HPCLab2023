@@ -122,7 +122,7 @@ void hpc_scaled_diff(Field& y, const double alpha, Field const& l,
 // alpha is scalar
 // y and x are vectors on length n
 void hpc_scale(Field& y, const double alpha, Field& x, const int N) {
-#pragma omp parallel for simd
+#pragma omp parallel for
     for (int i = 0; i < N; i++) {
         y[i] = alpha * x[i];
     }
