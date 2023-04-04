@@ -3,12 +3,12 @@ import numpy as np
 import pandas as pd
 
 
-df = pd.read_csv("strong_output.csv")
-
+df = pd.read_csv("strong_output.csv", index_col=False)
 # Strong scaling plot
-runtimes = df["runtime"]
 threads = pd.unique(df["threads"])
 sizes = pd.unique(df["size"])
+runtimes = df["runtime"]
+# print(runtimes, threads, sizes)
 
 plt.title('Strong Scaling')
 
