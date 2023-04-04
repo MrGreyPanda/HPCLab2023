@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-df = pd.read_csv("strong_output.csv", index_col=False)
+df = pd.read_csv("strong_output_sections.csv", index_col=False)
 
 # Calculate the average of the runtimes for each row
 df['runtime_avg'] = df.iloc[:, 2:].mean(axis=1)
