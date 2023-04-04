@@ -19,10 +19,19 @@ set key inside right
 #      '' using 1:6 with linespoints title "16 Threads", \
 #      '' using 1:7 with linespoints title "24 Threads",
 
-set output 'fisher_speedup.png'
+set output 'fisher_strong.png'
 set xlabel "Threads"
 set ylabel "Speedup"
 
+plot 'stat_output.csv' using 1:1 with linespoints title "Optimal", \
+     '' using 1:($2/$3) with linespoints title "2 Threads", \
+     '' using 1:($2/$4) with linespoints title "4 Threads", \
+     '' using 1:($2/$5) with linespoints title "8 Threads", \
+     '' using 1:($2/$6) with linespoints title "16 Threads", \
+     '' using 1:($2/$7) with linespoints title "24 Threads", 
+
+set output 'fisher_weak.png'
+set xlabel 
 plot 'stat_output.csv' using 1:1 with linespoints title "Optimal", \
      '' using 1:($2/$3) with linespoints title "2 Threads", \
      '' using 1:($2/$4) with linespoints title "4 Threads", \
