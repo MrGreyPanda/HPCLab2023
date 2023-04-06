@@ -24,10 +24,10 @@ make
 
 #for speedup
 echo threads,size,t1,t2,t3,t4,t5,t6,t7,t8,t9,t10 > strong_output.csv
-for threads in 1 2 4 8 16 24 
+for threads in 1 2 4 8 16 24
 do
     export OMP_NUM_THREADS=$threads
-    for problemsize in 64 128 256 512 1024
+    for problemsize in 64 90 128 181 256 313
     do
         echo -n $threads,$problemsize, >> strong_output.csv
         for i in {1..10}
@@ -38,5 +38,5 @@ do
     done
 done
 
-
+    
 make clean

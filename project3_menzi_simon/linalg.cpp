@@ -52,7 +52,7 @@ void cg_init(int nx) {
 double hpc_dot(Field const& x, Field const& y, const int N) {
     double result = 0;
 
-#pragma omp parallel for reduction(+ : result)
+#pragma omp simd parallel for reduction(+ : result)
     for (int i = 0; i < N; i++) result += x[i] * y[i];
 
     return result;
@@ -63,7 +63,7 @@ double hpc_dot(Field const& x, Field const& y, const int N) {
 double hpc_norm2(Field const& x, const int N) {
     double result = 0;
 
-#pragma omp parallel for reduction(+ : result)
+#pragma omp simd parallel for reduction(+ : result)
     for (int i = 0; i < N; i++) {
         result += x[i] * x[i];
     }
@@ -142,7 +142,7 @@ void hpc_lcomb(Field& y, const double alpha, Field& x, const double beta,
 // copy one vector into another y := x
 // x and y are vectors of length N
 void hpc_copy(Field& y, Field const& x, const int N) {
-#pragma omp parallel for
+#pragma omp simd parallel for
     // #pragma vector always
     for (int i = 0; i < N; i++) {
         y[i] = x[i];
