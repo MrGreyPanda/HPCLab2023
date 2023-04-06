@@ -2,6 +2,7 @@
 #SBATCH --cpus-per-task=48
 #SBATCH --output=fisher-%j.out
 #SBATCH --time=3:00:00
+#SBATCH --constraint=EPYC_7742
 
 # Load needed modules
 module load gcc python

@@ -62,8 +62,8 @@ void diffusion(const data::Field &s, data::Field &f) {
         // the west boundary
         {
             int i2 = 0;
+
 #pragma omp parallel for
-            // #pragma omp for nowait
             for (int j = 1; j < jend; j++) {
                 f(i2, j) = -(4. + alpha) * s(i2, j) + s(i2 + 1, j) +
                            s(i2, j - 1) + s(i2, j + 1) + alpha * y_old(i2, j) +
@@ -81,14 +81,15 @@ void diffusion(const data::Field &s, data::Field &f) {
                            s(i, j1 - 1) + alpha * y_old(i, j1) + bndW[j1] +
                            bndN[i] + beta * s(i, j1) * (1. - s(i, j1));
             }
+
+// inner north boundary
 #pragma omp parallel for
-            // inner north boundary
-            // #pragma omp for nowait
             for (int i = 1; i < iend; i++) {
                 f(i, j1) = -(4. + alpha) * s(i, j1) + s(i + 1, j1) +
                            s(i - 1, j1) + s(i, j1 - 1) + alpha * y_old(i, j1) +
                            bndN[i] + beta * s(i, j1) * (1. - s(i, j1));
             }
+
             // #pragma omp single nowait
             {
                 int i = nx - 1;  // NE corner
@@ -108,9 +109,9 @@ void diffusion(const data::Field &s, data::Field &f) {
                            s(i, j2 + 1) + alpha * y_old(i, j2) + bndW[j2] +
                            bndS[i] + beta * s(i, j2) * (1.0 - s(i, j2));
             }
+
+// inner south boundary
 #pragma omp parallel for
-            // inner south boundary
-            // #pragma omp for nowait
             for (int i = 1; i < iend; i++) {
                 f(i, j2) = -(4. + alpha) * s(i, j2) + s(i + 1, j2) +
                            s(i - 1, j2) + s(i, j2 + 1) + alpha * y_old(i, j2) +
