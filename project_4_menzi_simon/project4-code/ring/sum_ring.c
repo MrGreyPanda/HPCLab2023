@@ -23,7 +23,7 @@ int main (int argc, char *argv[])
     int my_rank, size;
     int snd_buf, rcv_buf;
     int right, left;
-    int sum, i;
+    int sum = 0, i;
 
     MPI_Status  status;
 
@@ -47,9 +47,9 @@ int main (int argc, char *argv[])
      * all ranks will obtain the sum.
      */
     snd_buf = my_rank;
-    for(int i = 0; i < size; i++){
-        MPI_Isend(&snd_buf, 1, MPI_INT, right, 0, MPI_COMM_WORLD, &request);
-        MPI_Recv(&rcv_buf, 1, MPI_INT, left, 0, MPI_COMM_WORLD, &status);
+    for(i = 0; i < size; i++){
+        MPI_Isend(&snd_buf, 1, MPI_INT, right, 0, MPI_COMM_WORLD, &sendRequest);
+        MPI_Irecv(&rcv_buf, 1, MPI_INT, left, 0, MPI_COMM_WORLD, &recieveRequest);
 
         MPI_Wait(&sendRequest, &status);
         MPI_Wait(&recieveRequest, &status);
