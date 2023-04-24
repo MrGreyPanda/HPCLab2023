@@ -117,7 +117,6 @@ int hpc_verify(double* x, int n, double elapsedTime) {
 			break;
 		}
 	}
-
 	// I will be using the elapsedTime argument here.
 
 	return correct;

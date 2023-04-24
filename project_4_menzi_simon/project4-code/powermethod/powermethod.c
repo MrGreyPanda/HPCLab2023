@@ -28,7 +28,7 @@ int main (int argc, char *argv[])
     int snd_buf, rcv_buf;
     int right, left;
     int sum, i;
-    int n = 10000;
+    int n = 2500;
     int maxIterations = 1000;
 
     MPI_Status  status;
@@ -105,5 +105,8 @@ int main (int argc, char *argv[])
     }
 
     MPI_Finalize();
+    free(x);
+    free(nextX);
+    free(A);
     return 0;
 }
