@@ -17,6 +17,9 @@
 
 #include <stdio.h>
 #include <mpi.h>
+#include <stdlib.h>
+#include <math.h>
+#include "hpc-power.h"
 
 
 int main (int argc, char *argv[])
@@ -25,13 +28,23 @@ int main (int argc, char *argv[])
     int snd_buf, rcv_buf;
     int right, left;
     int sum, i;
-    int n = std::atoi(argv[1]);
-    int maxIterations = std::atoi(argv[2]);
+    int n = 10000;
+    int maxIterations = 1000;
 
     MPI_Status  status;
     MPI_Request request;
-    double *x = hpc_generateVector(n, norm);
+    // double norm = 0;
+    // double *x = hpc_generateVector(n, *norm);
+	double globalNorm = 0.;
 
+    //generate the initial random vector
+    double* x = (double*)malloc(n * sizeof(double));
+    for(i = 0; i < n; i++){
+        double random = rand();
+        x[i] = random;
+        globalNorm = random * random;
+    }
+    globalNorm = sqrt(globalNorm);
 
     MPI_Init(&argc, &argv);
 
@@ -47,17 +60,49 @@ int main (int argc, char *argv[])
        timings, and validate the answer.
     */
 
-    int numrows = n / size;
-    int begin = my_rank * numrows;
+    int numRows = n / size;
+    int begin = my_rank * numRows;
+    if(my_rank == size - 1) numRows += n % size;
 
     
-    // double* A = hpc_generateMatrix(n, begin, numrows);
-    double* A = hpc_generateOnes(n, begin, numrows);
+    // double* A = hpc_generateMatrix(n, begin, numRows);
+    double* A = hpc_generateOnes(n, begin, numRows);
     double start_time = hpc_timer();
-    hpc_powerMethod(A, x, n, numrows, maxIterations)
+
+	double localNorm = 0.;
+	double* nextX = (double*)malloc(numRows * sizeof(double));
+	double val = 0.;
+
+
+
+    //start the power method
+	for(int k = 0; k < maxIterations; k++){
+		for(i = 0; i < n; i++){
+			x[i] = x[i] / globalNorm;
+		}
+
+		for(i = 0; i < numRows; i++){
+			val = 0.;
+
+			for(int j = 0; j < n; j++){
+				val += A[i * n + j] * x[j];
+			}
+			nextX[i] = val;
+			localNorm += val * val;
+		}
+
+		MPI_Allreduce(&localNorm, &globalNorm, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+		globalNorm = sqrt(globalNorm);
+		localNorm = 0.;
+		MPI_Allgather(nextX, numRows, MPI_DOUBLE, x, numRows, MPI_DOUBLE, MPI_COMM_WORLD);
+	}
 
     double end_time = hpc_timer();
     double time = end_time - start_time;
+    if(my_rank == 0){
+        printf("The elapsed time is %f \n", time);
+        printf("Correct: %d\n", hpc_verify(x, n, time));
+    }
 
     MPI_Finalize();
     return 0;

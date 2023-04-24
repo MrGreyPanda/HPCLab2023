@@ -47,22 +47,7 @@ double* hpc_generateMatrix(int n, int startrow, int numrows) {
 	return A;
 }
 
-double* hpc_generateVector(const int &n, int &norm){
-	norm = 0;
-	double* x;
-	int i;
 
-	x = (double*)calloc(n, sizeof(double));
-
-	for (i = 0; i < n; i++) {
-		int rand = rand();
-		x[i] = rand;
-		norm = rand * rand;
-	}
-	norm = std::sqrt(norm);
-
-	return x;
-}
 
 double* hpc_generateIdentity(int n, int startrow, int numrows) {
 	double* A;
@@ -96,35 +81,6 @@ double* hpc_generateOnes(int n, int startrow, int numrows) {
 	return A;
 }
 
-double* hpc_powerMethod(double* A, double* x, const int &n, const int &numrows, const int &maxIterations){
-	double globalnorm = 0.;
-	double locnorm = 0.;
-	double* x = hpc_generateVector(n, norm);
-	double* nextX = (double*)calloc(n, sizeof(double));
-	double sum = 0.;
-	for(int k = 0; k < maxIterations; k++){
-		for(int i = 0; i < n; i++){
-			x[i] = x[i] / globalnorm;
-		}
-
-		for(int i = 0; i < numrows; i++){
-			sum = 0.;
-
-			for(int j = 0; j < n; j++){
-				sum += A[i * n + j] * x[j];
-			}
-			nextX[i] = sum;
-			locnorm += sum * sum;
-		}
-
-		MPI_Allreduce(&locnorm, &globalnorm, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
-		globalnorm = std::sqrt(globalnorm);
-		locnorm = 0.;
-		MPI_Allgather(nextX, numrows, MPI_DOUBLE, x, numrows, MPI_DOUBLE, MPI_COMM_WORLD);
-	}
-
-	return x;
-}
 /*
 Call this function at the end of your program. It verifies that the answer you got is correct
 and allows us to have timing results in a convenient format.

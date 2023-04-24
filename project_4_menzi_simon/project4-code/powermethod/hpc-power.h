@@ -1,3 +1,5 @@
+#ifndef HPC_POWER_H
+#define HPC_POWER_H
 /*
  *  hpc0power.h
  *
@@ -38,15 +40,12 @@ return value:
 */
 double* hpc_generateMatrix(int n, int startrow, int numrows);
 
-double* hpc_generateVector(const instint &norm);
 
 double* hpc_generateIdentity(int n, int startrow, int numrows);
 
 
 double* hpc_generateOnes(int n, int startrow, int numrows);
 
-
-double* hpc_powerMethod(double* A, double* x,const int &n, const int &numrows, const int &maxIterations);
 /*
 Call this function at the end of your program. It verifies that the answer you got is correct
 and allows me to have timing results in a convenient format.
@@ -66,3 +65,5 @@ returns:
 int hpc_verify(double* x, int n, double elapsedTime);
 
 double hpc_timer();
+
+#endif // HPC_POWER_H
