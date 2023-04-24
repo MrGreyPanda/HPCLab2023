@@ -89,6 +89,7 @@ int main(int argc, char *argv[])
     MPI_Cart_create(MPI_COMM_WORLD, 2, dims, periods, 0, &comm_cart);
     int cart_rank;
     MPI_Comm_rank(comm_cart, &cart_rank);
+    
     // TODO: find your top/bottom/left/right neighbor using the new communicator, see MPI_Cart_shift()
     MPI_Cart_shift(comm_cart, 0, 1, &rank_top, &rank_bottom);
     MPI_Cart_shift(comm_cart, 1, 1, &rank_left, &rank_right);

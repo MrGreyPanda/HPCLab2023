@@ -14,6 +14,8 @@
 #define MIN_Y   -1.4
 #define MAX_Y    1.4
 
+#include <mpi.h>
+
 typedef struct
 {
     long nx;
@@ -26,8 +28,8 @@ typedef struct
 
 typedef struct
 {
-    int y;
     int x;
+    int y;
     int nx;
     int ny;
     MPI_Comm comm;
@@ -45,20 +47,18 @@ Partition createPartition(int mpi_rank, int mpi_size)
     Partition p;
 
     // TODO: determine size of the grid of MPI processes (p.nx, p.ny), see MPI_Dims_create()
-    int dims[2];
+    int dims[] = {0, 0};
     MPI_Dims_create(mpi_size, 2, dims);
     p.ny = dims[0];
     p.nx = dims[1];
     
 
     // TODO: Create cartesian communicator (p.comm), we do not allow the reordering of ranks here, see MPI_Cart_create()
-    MPI_Comm comm_cart;
-    int periods[2] = {0, 0};
-    MPI_Cart_create(MPI_COMM_WORLD, 2, dims, periods, 0, &comm_cart);
-    p.comm = comm_cart;
+    int periods[] = {0, 0};
+    MPI_Cart_create(MPI_COMM_WORLD, 2, dims, periods, 0, &p.comm);
     
     // TODO: Determine the coordinates in the Cartesian grid (p.x, p.y), see MPI_Cart_coords()
-    MPI_Cart_coords(p.comm, mpi_rank, 2, &p.x, &p.y);
+    MPI_Cart_coords(p.comm, mpi_rank, 2, &p.x);
 
     return p;
 }
@@ -74,12 +74,12 @@ Partition updatePartition(Partition p_old, int mpi_rank)
     Partition p;
 
     // copy grid dimension and the communicator
-    p.ny = p_old.ny;
     p.nx = p_old.nx;
+    p.ny = p_old.ny;
     p.comm = p_old.comm;
     
     // TODO: update the coordinates in the cartesian grid (p.x, p.y) for given mpi_rank, see MPI_Cart_coords()
-    MPI_Cart_coords(p.comm, mpi_rank, 2, &p.x, &p.y);
+    MPI_Cart_coords(p.comm, mpi_rank, 2, &p.x);
 
     return p;
 }
@@ -103,13 +103,13 @@ Domain createDomain(Partition p)
     d.starty = p.y * d.ny;
 
     if(p.x == p.nx - 1)
-        d.nx = IMAGE_WIDTH - d.startx;
+        d.nx += IMAGE_WIDTH % p.nx;
     if(p.y == p.ny - 1)
-        d.ny = IMAGE_HEIGHT - d.starty;
+        d.ny += IMAGE_HEIGHT % p.ny;
 
     // TODO: compute index of the last pixel in the local domain
-    d.endx = d.startx + d.nx - 1;
-    d.endy = d.starty + d.ny - 1;
+    d.endx = d.startx + d.nx;
+    d.endy = d.starty + d.ny;
 
     return d;
 }
