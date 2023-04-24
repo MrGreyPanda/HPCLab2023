@@ -28,7 +28,7 @@ int main (int argc, char *argv[])
     int snd_buf, rcv_buf;
     int right, left;
     int sum, i;
-    int n = 2500;
+    int n = 8192;
     int maxIterations = 1000;
 
     MPI_Status  status;
@@ -100,8 +100,7 @@ int main (int argc, char *argv[])
     double end_time = hpc_timer();
     double time = end_time - start_time;
     if(my_rank == 0){
-        printf("The elapsed time is %f \n", time);
-        printf("Correct: %d\n", hpc_verify(x, n, time));
+        printf("%f,%d,%d\n", time, hpc_verify(x, n, time), size);
     }
 
     MPI_Finalize();
