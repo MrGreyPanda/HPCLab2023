@@ -1,0 +1,2 @@
+/var/spool/slurm/slurmd/state/job13112416/slurm_script: line 4: 63919 Killed                  ./hist_omp
+slurmstepd: error: Detected 1 oom_kill event in StepId=13112416.batch. Some of the step tasks have been OOM Killed.

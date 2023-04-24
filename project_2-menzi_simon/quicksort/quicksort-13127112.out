@@ -1,0 +1,15 @@
+
+The following have been reloaded with a version change:
+  1) gcc/4.8.5 => gcc/9.3.0
+
+c++ -c -O2  -fopenmp quicksort.cpp -o quicksort.o 
+c++ -fopenmp quicksort.o -o quicksort
+
+libgomp: Invalid value for environment variable OMP_NUM_THREADS
+
+libgomp: Invalid value for environment variable OMP_NUM_THREADS
+
+libgomp: Invalid value for environment variable OMP_NUM_THREADS
+
+libgomp: Invalid value for environment variable OMP_NUM_THREADS
+rm *.o quicksort
