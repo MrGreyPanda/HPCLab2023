@@ -26,7 +26,6 @@ int main (int argc, char *argv[])
     int sum, i;
 
     MPI_Status  status;
-    MPI_Request request;
 
 
     MPI_Init(&argc, &argv);
@@ -34,6 +33,8 @@ int main (int argc, char *argv[])
     MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
 
     MPI_Comm_size(MPI_COMM_WORLD, &size);
+    MPI_Request sendRequest;
+    MPI_Request recieveRequest;
 
 
     right = (my_rank + 1) % size;/* get rank of neighbor to your right */
@@ -46,12 +47,17 @@ int main (int argc, char *argv[])
      * all ranks will obtain the sum.
      */
     snd_buf = my_rank;
-    while(i < size){
-        MPI_Sendrecv(snd_buf, 1, MPI_INT, right, 0, rcv_buf, 1, MPI_INT, left, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+    for(int i = 0; i < size; i++){
+        MPI_Isend(&snd_buf, 1, MPI_INT, right, 0, MPI_COMM_WORLD, &request);
+        MPI_Recv(&rcv_buf, 1, MPI_INT, left, 0, MPI_COMM_WORLD, &status);
+
+        MPI_Wait(&sendRequest, &status);
+        MPI_Wait(&recieveRequest, &status);
+
         sum += rcv_buf;
         snd_buf = rcv_buf;
-        ++i;
     }
+
 
 
 
