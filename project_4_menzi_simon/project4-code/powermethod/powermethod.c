@@ -28,13 +28,12 @@ int main (int argc, char *argv[])
     int snd_buf, rcv_buf;
     int right, left;
     int sum, i;
-    int n = 8192;
+    int n = 8192;       // multiple of 64
     int maxIterations = 1000;
 
     MPI_Status  status;
     MPI_Request request;
-    // double norm = 0;
-    // double *x = hpc_generateVector(n, *norm);
+    
 	double globalNorm = 0.;
 
     //generate the initial random vector

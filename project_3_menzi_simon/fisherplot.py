@@ -2,14 +2,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-df = pd.read_csv("testing_scaled.csv", index_col=False)
+df = pd.read_csv("bench.csv", index_col=False)
 
 # Calculate the average of the runtimes for each row
-df['runtime_avg'] = df.iloc[:, 2:].mean(axis=1)
-
-# Store the result in a variable called runtimes
-runtimes = df['runtime_avg']
-
+df['times'] = df.iloc[:,0]
+df['procs'] = df.iloc[:,2]
 
 plt.title('Strong Scaling')
 

@@ -1,24 +1,26 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 
-# Load data from bench.csv
-data = np.genfromtxt('bench.csv', delimiter=',', usecols=(0,2))
+# Read in raw data (col1: cores col2: time)
+df = pd.read_csv("bench.csv", index_col=False)
+df['times']=df[:,0]
+times = df['times']
+df['procs']=df[:,2]
 
-# Extract the timings and number of processors from the data
-timings = data[:,0]
-procs = data[:,1]
 
-# Calculate the speedup and efficiency
-speedup = timings[0]/timings
-efficiency = speedup/procs
+procs = df['procs']
+# Calculate the speedup; last time in the "times" array is the serial timing
+speedup = times[0]/times 
 
-# Create the plot
-fig, ax = plt.subplots()
-ax.plot(procs, efficiency, '-o')
-ax.set_xlabel('Number of Processors')
-ax.set_ylabel('Efficiency')
-ax.set_title('Strong Scaling Plot')
-ax.grid()
+# Plot
+fig = plt.figure()
+ax  = fig.add_subplot(111) 
+ax.plot(procs, speedup, '-x')
+ax.legend()
+ax.set_xlabel("processors")
+ax.set_ylabel("speedup")
+ax.set_title("strong scaling")
 
-# Show the plot
-plt.show()
+# Save the figure
+fig.savefig("strong_scaling_plot.png", dpi=300)

@@ -12,7 +12,7 @@ set style data linespoints
 set size 1.0,1.0
 
 # Plot the data from bench.csv
-plot "bench.csv" using 3:1 with linespoints lw 2 notitle
+plot "bench.data" using 3:1 with linespoints lw 2 notitle
 
 # Save the plot to a file and show it
 set output
