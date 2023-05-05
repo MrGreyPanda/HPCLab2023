@@ -1,9 +1,19 @@
 
 #   M.L. for High Performance Computing Lab @USI & @ETHZ - malik.lechekhab@usi.ch 
+
+function degree_matrix(A::Matrix{Int})
+    n = size(A, 1)
+    D = zeros(Int, n, n)
+    for i in 1:n
+        D[i, i] = sum(A[i, :])
+    end
+    return D
+
 """
     spectral_part(A)
 
 Compute the bi-partions of graph `A` using spectral method.
+
 
 # Examples
 ```julia-repl
@@ -21,12 +31,18 @@ function spectral_part(A)
     end
     
     #   1.  Construct the Laplacian matrix.
+    D = degree_matrix(A)
+    L = D - A
   
     #   2.  Compute its eigendecomposition.
-
+    F = eigen(L)
+    
     #   3.  Label the vertices with the entries of the Fiedler vector.
+    fiedler_vec = F.vectors[:, 2]
+    fiedler_val = F.values[2]
 
     #   4.  Partition them around their median value, or 0.
+
 
     #   5.  Return the indicator vector
 
