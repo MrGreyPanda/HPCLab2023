@@ -32,7 +32,14 @@ function rec_bisection(method, levels, A, coords=zeros(0), vn=zeros(0))
        
     else
         if !isempty(coords)
-            p = eval(Symbol(method))(A, coords)
+            if (method == spectral_part)
+                p = eval(Symbol(method))(A)
+            else if (method == metis_part)
+                p = eval(Symbol(method))(A, 2, :KWAY)
+            else
+                p = eval(Symbol(method))(A, coords)
+            end
+            # p = eval(Symbol(method))(A, coords)
             idx1 = findall(x -> x == 1, p)
             idx2 = findall(x -> x == 2, p)
             coords1 = coords[idx1,:]
