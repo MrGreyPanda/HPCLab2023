@@ -19,13 +19,14 @@ julia> rec_bisection("coordinatePart", 3, A, coords)
  8
 ```
 """
-function rec_bisection(method::Function, levels::Int, A, coords=zeros(0), vn::AbstractVector=zeros(Int, 0))
+function rec_bisection(method, levels::Int, A, coords=Matrix{Float64}(undef,0,0), vn::AbstractVector=Vector{Int}())
     minpoints = 8
     n = size(A, 1)
 
     p = zeros(Int, n)
-
+    
     if isempty(vn)
+        println("Create vn")
         vn = collect(1:n)
     end
 

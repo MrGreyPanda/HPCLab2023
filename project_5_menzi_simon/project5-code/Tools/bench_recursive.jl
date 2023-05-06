@@ -31,6 +31,9 @@ function benchmark_recursive()
         println("Reading the matrix")
         A, coords = read_mat_graph(path);
         
+        println(size(A), size(coords))
+
+        
         #   1st row
         pAll[i, 1] = mesh
 
