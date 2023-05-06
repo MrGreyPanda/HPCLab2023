@@ -19,56 +19,50 @@ julia> rec_bisection("coordinatePart", 3, A, coords)
  8
 ```
 """
-function rec_bisection(method, levels, A, coords=zeros(0), vn=zeros(0))
+function rec_bisection(method::Function, levels::Int, A, coords=zeros(0), vn::AbstractVector=zeros(Int, 0))
     minpoints = 8
+    n = size(A, 1)
 
-    n = size(A)[1]
+    p = zeros(Int, n)
 
     if isempty(vn)
         vn = collect(1:n)
     end
 
     if n < minpoints || levels < 1
-       
+        return Vector{Int}()
     else
         if !isempty(coords)
-            if (method == spectral_part)
-                p = eval(Symbol(method))(A)
-            else if (method == metis_part)
-                p = eval(Symbol(method))(A, 2, :KWAY)
-            else
-                p = eval(Symbol(method))(A, coords)
-            end
-            # p = eval(Symbol(method))(A, coords)
+            p = method(A, coords)
             idx1 = findall(x -> x == 1, p)
             idx2 = findall(x -> x == 2, p)
-            coords1 = coords[idx1,:]
-            coords2 = coords[idx2,:]
+            coords1 = coords[idx1, :]
+            coords2 = coords[idx2, :]
         else
-            p = eval(Symbol(method))(A)
+            p = method(A)
             idx1 = findall(x -> x == 1, p)
             idx2 = findall(x -> x == 2, p)
             coords1 = coords2 = zeros(0)
         end
+
+        if isempty(idx1) || isempty(idx2)
+            return Vector{Int}()
+        end
         
+
         vn1 = vn[idx1]
         vn2 = vn[idx2]
 
         A1 = A[idx1, idx1]
         A2 = A[idx2, idx2]
 
-        # if !isemtpy(coords)
         if levels > 1
-            levels = levels - 1
+            levels -= 1
             p1 = rec_bisection(method, levels, A1, coords1, vn1)
             p2 = rec_bisection(method, levels, A2, coords2, vn2)
-
-            return vcat(p1, p2.+maximum(p1))[sortperm(vcat(vn1, vn2))]
-            
+            return vcat(p1, p2 .+ (isempty(p1) ? 0 : maximum(p1)))[sortperm(vcat(vn1, vn2), rev=true)]
         end
 
         return p[sortperm(vn)]
-        # end
-
     end
 end

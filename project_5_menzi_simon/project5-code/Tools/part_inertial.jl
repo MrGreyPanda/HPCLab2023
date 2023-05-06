@@ -36,10 +36,9 @@ function inertial_part(A, coords)
     p = zeros(Float64, size(A)[1])
 
     V1, V2 = partition(coords', eigv)
-    for i in V1
-        p[i] = 1
-    end
-
+    p[V1] .= 1
+    p[V2] .= 2
+    p = Int.(p)
     #   5.  Return the indicator vector
     return p
 

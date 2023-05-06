@@ -44,13 +44,14 @@ function spectral_part(A)
 
     #   4.  Partition them around their median value, or 0.
     #   The threshold of the partition is 0 as I want to have a roughly balanced partition and a minimum cut.
-    p = zeros(Int, n)
+    p = ones(Int, n)
     for (i, val) in enumerate(fiedler_vec)
-        if val < 0
-            p[i] = 1
+        if val > 0
+            p[i] = 2
         end
     end
 
+    p = Int.(p)
     #   5.  Return the indicator vector
     return p
 end
