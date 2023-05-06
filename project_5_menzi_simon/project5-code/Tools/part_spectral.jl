@@ -42,14 +42,14 @@ function spectral_part(A)
     fiedler_val = F.values[2]
 
     #   4.  Partition them around their median value, or 0.
-
+    #   The threshold of the partition is 0 as I want to have a roughly balanced partition and a minimum cut.
+    p = zeros(Int, n)
+    for i in fiedler_vec
+        if i < 0
+            p[i] = 1
+    end
 
     #   5.  Return the indicator vector
-
-    # RANDOM PARTITIONING - REMOVE AFTER COMPLETION OF THE EXERCISE
-    n = size(A)[1];
-    rng = MersenneTwister(1234);
-    p = bitrand(rng, n);
     return p
-
+    # RANDOM PARTITIONING - REMOVE AFTER COMPLETION OF THE EXERCISE
 end
