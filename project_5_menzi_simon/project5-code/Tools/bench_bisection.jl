@@ -21,29 +21,35 @@ function benchmark_bisection()
 
     #   Loop through meshes
     for (i, mesh) in enumerate(meshes)
+        println("Mesh: ", mesh)
 
         #   Define path to mat file
         path = joinpath(dirname(@__DIR__),"Meshes","2D",mesh*".mat");
 
         #   Read data
+        println("Reading data...")
         A, coords = read_mat_graph(path);
 
         #   1st row
         pAll[i, 1] = mesh
 
         #   Coordinate bisection
+        println("Coordinate bisection...")
         pCoordinate = coordinate_part(A, coords);
         pAll[i, 2] = count_edge_cut(A, pCoordinate);
 
         #   METIS bisection
+        println("METIS bisection...")
         pMetis = metis_part(A, 2, :KWAY);
         pAll[i, 3] = count_edge_cut(A, pMetis);
 
         #   Spectral bisection
+        println("Spectral bisection...")
         pSpectral = spectral_part(A);
         pAll[i, 4] = count_edge_cut(A, pSpectral);
 
         #   Inertial bisection
+        println("Inertial bisection...")
         pInertial = inertial_part(A, coords);
         pAll[i, 5] = count_edge_cut(A, pInertial);         
     end

@@ -17,7 +17,7 @@ function inertial_part(A, coords)
     #   1.  Compute the center of mass.
     center_of_mass = sum(coords, dims=1) / size(coords)[1]
 
-    #   2.  Construct the matrix M. (see pdf of the assignment)
+    # #   2.  Construct the matrix M. (see pdf of the assignment)
     M = zeros(size(A))
     for i in 1:size(A)[1]
         for j in 1:size(A)[1]
@@ -25,8 +25,9 @@ function inertial_part(A, coords)
         end
     end
 
-    #   3.  Compute the eigenvector associated with the smallest eigenvalue of M.
-    eigv = eigvecs(M)[:, 1]
+    # #   3.  Compute the eigenvector associated with the smallest eigenvalue of M.
+    # eigv = eigvecs(M)[:, 1]
+    eigv = eigs(M, nev=1, which=:SR, ritzvec=true)[2][:, 1]
 
     #   4.  Partition the nodes around line L 
     #       (you may use the function partition(coords, eigv))

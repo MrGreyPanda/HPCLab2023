@@ -16,10 +16,12 @@ path_file = "./Meshes/2D/airfoil1.mat" # or "/path/to/project/Sources/Meshes/Mes
 A, coords = read_mat_graph(path_file);
 
 #   Draw & save the airfoil1
+println("Drawing the airfoil1...")
 fig = draw_graph(A, coords)
 save("airfoil1.pdf", fig)
 
 #   Run benchmark
+println("Running benchmark...")
 benchmark_bisection()
 benchmark_recursive()
 benchmark_metis()
