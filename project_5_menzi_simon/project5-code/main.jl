@@ -12,20 +12,20 @@ using Graphs, SGtSNEpi, Colors, CairoMakie, PrettyTables
 include("./Tools/add_paths.jl");
 
 #   Generate adjacency matrices and vertices coordinates
-path_file = "./Meshes/2D/airfoil1.mat" # or "/path/to/project/Sources/Meshes/Meshes/2D/airfoil1.mat
-A, coords = read_mat_graph(path_file);
+# path_file = "./Meshes/2D/airfoil1.mat" # or "/path/to/project/Sources/Meshes/Meshes/2D/airfoil1.mat
+# A, coords = read_mat_graph(path_file);
 
-#   Draw & save the airfoil1
-println("Drawing the airfoil1...")
-fig = draw_graph(A, coords)
-save("airfoil1.pdf", fig)
+# #   Draw & save the airfoil1
+# println("Drawing the airfoil1...")
+# fig = draw_graph(A, coords)
+# save("airfoil1.pdf", fig)
 
-#   Run benchmark
-println("Running benchmark_bisection")
-benchmark_bisection()
-println()
+# #   Run benchmark
+# println("Running benchmark_bisection")
+# benchmark_bisection()
+# println("")
 println("Running benchmark_recursive")
 benchmark_recursive()
-println()
+println("")
 println("Running benchmark_metis")
 benchmark_metis()
