@@ -30,15 +30,30 @@ function benchmark_recursive()
 
         #   1st row
         pAll[i, 1] = mesh
+        println("Starting recursive routines")
+        println("---------------------------")
 
         #   Recursive routines
         #   1.  Spectral
+        println("Starting spectral")
+        pSpectral8 = rec_bisection("spectral_part", 8, A, coords, )
+        pAll[i, 2] = count_edge_cut(A, pSpectral8)
+
+        pSpectral16 = rec_bisection("spectral_part", 16, A, coords, )
+
+
+        pCoordinate = coordinate_part(A, coords);
+        pAll[i, 2] = count_edge_cut(A, pCoordinate);
         
         #   2.  METIS
-        
+        println("Starting METIS")
+
         #   3.  Coordinate
-        
+        println("Starting Coordinate")
+
         #   4.  Inertial
+        println("Starting Ineratial")
+
     end
 
     #   Print result table

@@ -13,6 +13,8 @@ julia> inertial_part(A, coords)
 ```
 """
 function inertial_part(A, coords)
+    @assert size(A)[1] == size(coords)[1] "Dimension mismatch: number of rows in A must match the number of rows in coords"
+
     
     #   1.  Compute the center of mass.
     center_of_mass = sum(coords, dims=1) / size(coords)[1]
@@ -31,8 +33,9 @@ function inertial_part(A, coords)
 
     #   4.  Partition the nodes around line L 
     #       (you may use the function partition(coords, eigv))
-    p = zeros(Int, size(A)[1])
-    V1, V2 = partition(coords, eigv)
+    p = zeros(Float64, size(A)[1])
+
+    V1, V2 = partition(coords', eigv)
     for i in V1
         p[i] = 1
     end
