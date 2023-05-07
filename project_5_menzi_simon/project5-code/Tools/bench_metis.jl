@@ -23,6 +23,8 @@ function benchmark_metis()
         #   Read data
         A, coords = read_mat_graph(path);
 
+        A = Metis.graph(A; weights=true, check_hermitian=false)
+
         #   1st row
         pAll[i, 1] = mesh
         println("Starting METIS routines")
@@ -32,10 +34,10 @@ function benchmark_metis()
         #   1.  METIS
         println("Starting METIS")
         # Starting METIS method recursively with 16 partions
-        pMetis16 = rec_bisection("metis_part", 16, A, coords, )
+        pMetis16 = rec_bisection("metis_part", 16, A, coords)
         pAll[i, 2] = count_edge_cut(A, pMetis16)
         # Starting METIS method recursively with 16 partions
-        pMetis32 = rec_bisection("metis_part", 32, A, coords, )
+        pMetis32 = rec_bisection("metis_part", 32, A, coords)
         pAll[i, 3] = count_edge_cut(A, pMetis32)
 
         #   2.  METIS
