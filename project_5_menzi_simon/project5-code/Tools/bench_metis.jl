@@ -11,14 +11,14 @@ julia> benchmark_metis()
 """
 function benchmark_metis()
     #   1.  Load luxembourg_osm.mat and usroads.mat
-    meshes = ["luxembourg_osm" "usroads"]
-    algs = ["Metis" "Metis"]
+    meshes_roads = ["luxembourg_osm" "usroads"]
+    meshes_maps = ["GR" "CH" "VN" "NO" "RU" "GB" "CL"]
 
     #   Init result array
-    pAll = Array{Any}(undef, length(meshes), length(algs) + 1)
-    for (j, n_levels) in enumerate([3, 4])
-        for (i, mesh) in enumerate(meshes)
-            n_parts = 2^j
+    pAll = Array{Any}(undef, length(meshes_roads), length(algs) + 1)
+    for (i, n_levels) in enumerate([3, 4])
+        for (j, mesh) in enumerate(meshes_roads)
+            n_parts = 2^i
             println("Benchmarking recursive bisection for mesh $mesh with $n_parts partitions")
             #   Define path to mat file
             path = joinpath(dirname(@__DIR__),"Meshes","Roads",mesh*".mat");
@@ -39,17 +39,43 @@ function benchmark_metis()
             #   METIS routines
             #   a)  METIS KWAY
             println("Starting METIS")
-            # Starting METIS method recursively with 16 partions
+            # Starting METIS method KWAY
             println("Computing recursive bisection for METIS for mesh $mesh with $n_levels partitions with KWAY")
             pMetis = metis_part(A, n_parts, :KWAY);
             pAll[i, j] = count_edge_cut(A, pMetis)
 
             #   b)  METIS RECURSIVE 
-            # Starting METIS method recursively with 32 partions
+            # Starting METIS method RECURSIVE
             println("Computing recursive bisection for METIS for mesh $mesh with $n_levels partitions with RECURSIVE")
             pMetis = metis_part(A, n_levels, :RECURSIVE);
             pAll[i, j + 1] = count_edge_cut(A, pMetis)
+
+
         end
+        
+        for (j, mesh) in enumerate(meshes_maps)
+            path = joinpath(dirname(@__DIR__),"Meshes","Countries",mesh*".csv")
+            A, coords = read_csv_graph(path)
+            fig = draw_graph(A, coords)
+            savefig(fig, $mesh*"_graph.png")
+
+            #   a)  METIS KWAY
+            println("Starting METIS")
+            # Starting METIS method KWAY
+            println("Computing recursive bisection for METIS for mesh $mesh with $n_levels partitions with KWAY")
+            pMetis = metis_part(A, n_parts, :KWAY);
+            pAll[i, j] = count_edge_cut(A, pMetis)
+
+            #   b)  METIS RECURSIVE 
+            # Starting METIS method RECURSIVE
+            println("Computing recursive bisection for METIS for mesh $mesh with $n_levels partitions with RECURSIVE")
+            pMetis = metis_part(A, n_levels, :RECURSIVE);
+            pAll[i, j + 1] = count_edge_cut(A, pMetis)
+            
+
+            
+        end
+
     end
     #   3.  Visualize the results for 32 partitions.
     #   Print result table
