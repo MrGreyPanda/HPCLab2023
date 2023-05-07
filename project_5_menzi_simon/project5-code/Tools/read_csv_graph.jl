@@ -42,7 +42,7 @@ function read_csv_graph(path_file)
     #       use drawGraph(A, coords)
     fig = drawGraph(A, coords)
     mesh = replace(path_file, ".csv", "")
-    savefig(fig, $mesh*"_graph.png")
+    savefig(fig, mesh*"_graph.png")
     
     #   4.  Return the matrix A and the coordinates 
     #       return(A, coords)

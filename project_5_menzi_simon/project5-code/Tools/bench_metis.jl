@@ -60,14 +60,14 @@ function benchmark_metis()
             #   a)  METIS KWAY
             println("Starting METIS")
             # Starting METIS method KWAY
-            println("Computing recursive bisection for METIS for mesh $mesh with $n_levels partitions with KWAY")
+            println("Computing recursive bisection for METIS for mesh $mesh with $exponent partitions with KWAY")
             pMetis = metis_part(A, exponent, :KWAY);
             pAll[i, j + 4] = count_edge_cut(A, pMetis)
 
             #   b)  METIS RECURSIVE 
             # Starting METIS method RECURSIVE
-            println("Computing recursive bisection for METIS for mesh $mesh with $n_levels partitions with RECURSIVE")
-            pMetis = metis_part(A, n_levels, :RECURSIVE);
+            println("Computing recursive bisection for METIS for mesh $mesh with $exponent partitions with RECURSIVE")
+            pMetis = metis_part(A, exponent, :RECURSIVE);
             pAll[i, j + 5] = count_edge_cut(A, pMetis)
 
             
@@ -76,12 +76,13 @@ function benchmark_metis()
     end
     #   3.  Visualize the results for 32 partitions.
 
-    io = IOBuffer()
-    #   Print result table
-    header =(hcat(["Partitions"], ""), ["" "Luxemburg" "" "usroads-48" "" "Greece" "" "Switzerland" "" "Vietnam" "" "Norway" "" "Russia" "" "Great Britain" "" "Chile"])
-    pretty_table(io, pAll; header = header, crop = :none, header_crayon = crayon"bold cyan")
+    # io = IOBuffer()
+    # #   Print result table
+    # header =(["" "Partitions""" "Luxemburg" "" "usroads-48" "" "Greece" "" "Switzerland" "" "Vietnam" "" "Norway" "" "Russia" "" "Great Britain" "" "Chile"]
+    #               ["KWAY" "RECURSIVE" "KWAY" "RECURSIVE" "KWAY" "RECURSIVE" "KWAY" "RECURSIVE" "KWAY" "RECURSIVE" "KWAY" "RECURSIVE" "KWAY" "RECURSIVE" "KWAY" "RECURSIVE" "KWAY" "RECURSIVE"])              
+    # pretty_table(io, pAll; header = header, crop = :none, header_crayon = crayon"bold cyan")
 
-    open("metis_benchmark.txt", "w") do file
-        print(file, String(take!(io)))
-    end
+    # open("metis_benchmark.txt", "w") do file
+    #     print(file, String(take!(io)))
+    # end
 end

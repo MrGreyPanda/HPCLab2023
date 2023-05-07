@@ -16,15 +16,16 @@ A, coords = read_mat_graph(path_file);
 
 #   Draw & save the airfoil1
 println("Drawing the airfoil1...")
-fig = draw_graph(A, coords)
-save("airfoil1.pdf", fig)
-
+# fig = draw_graph(A, coords)
+# save("airfoil1.pdf", fig)
+fig = draw_fiedler(A, coords)
+save("airfoil1_fiedler.pdf", fig)
 # #   Run benchmark
 # println("Running benchmark_bisection")
 # benchmark_bisection()
 # println("")
-println("Running benchmark_recursive")
-benchmark_recursive()
-println("")
+# println("Running benchmark_recursive")
+# benchmark_recursive()
+# println("")
 # println("Running benchmark_metis")
 # benchmark_metis()
