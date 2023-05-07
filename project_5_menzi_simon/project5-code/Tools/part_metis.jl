@@ -14,9 +14,9 @@ julia> metis_part(A, 2, :RECURSIVE)
  2
 ```
 """
-function metis_part(A, k=2, alg=:KWAY)
+function metis_part(A, k, alg)
     g = Graph(A)
-    p = Metis.partition(g, k, alg)
+    p = Metis.partition(g, k, alg = alg)
     p = Int.(p)
 
     return p

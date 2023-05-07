@@ -17,28 +17,36 @@ function inertial_part(A, coords)
 
     
     #   1.  Compute the center of mass.
-    center_of_mass = sum(coords, dims=1) / size(coords)[1]
+    n = size(coords)[1]
+    center_of_mass = sum(coords, dims=1) / n
+    x = sum(coords[:,1]) / n
+    y = sum(coords[:,2]) / n
 
-    # #   2.  Construct the matrix M. (see pdf of the assignment)
-    M = zeros(size(A))
-    for i in 1:size(A)[1]
-        for j in 1:size(A)[1]
-            M[i, j] = (coords[i, 1] - center_of_mass[1]) * (coords[j, 1] - center_of_mass[1]) + (coords[i, 2] - center_of_mass[2]) * (coords[j, 2] - center_of_mass[2])
-        end
-    end
+    #   2.  Construct the matrix M. (see pdf of the assignment)
+    S_xx = sum(coords[:, 1] .- x)
+    S_yy = sum(coords[:, 2] .- y)
+    S_xy = dot(coords[:, 1], coords[:, 2]) 
+        + x * y 
+        - sum(coords[:, 1] .* y) 
+        - sum(coords[:, 2] .* x)
 
-    # #   3.  Compute the eigenvector associated with the smallest eigenvalue of M.
+    M = [S_yy S_xy;
+         S_xy S_xx]
+
+
+    #   3.  Compute the eigenvector associated with the smallest eigenvalue of M.
     # eigv = eigvecs(M)[:, 1]
-    eigv = eigs(M, nev=1, which=:SR, ritzvec=true)[2][:, 1]
+    F = eigen(M)
+    eigv = F.vectors[:,1]
 
     #   4.  Partition the nodes around line L 
     #       (you may use the function partition(coords, eigv))
     p = zeros(Float64, size(A)[1])
 
-    V1, V2 = partition(coords', eigv)
+    V1, V2 = partition(coords, eigv)
     p[V1] .= 1
     p[V2] .= 2
-    p = Int.(p)
+    
     #   5.  Return the indicator vector
     return p
 

@@ -24,32 +24,32 @@ function benchmark_recursive()
     for (i, mesh) in enumerate(meshes)
         #   Define path to mat file
         path = joinpath(dirname(@__DIR__),"Meshes","2D",mesh*".mat");
-
+        
         for (j, n_levels) in enumerate([3, 4])
             n_parts = 2^j
             println("Benchmarking recursive bisection for mesh $mesh with $n_parts partitions")
-
+        
             #   Read data
-            A, coords = read_mat_graph(path);
+            A, coords = read_mat_graph(path)
 
             #   1st row
             pAll[i, 1] = mesh
 
             #   Recursive routines
             #   1.  Spectral
-            # println("Computing recursive bisection for spectral partitioning for mesh $mesh with $n_parts partitions")
-            # pSpectral = rec_bisection(spectral_part, n_levels, A)
-            # pAll[i, 1 + j] = count_edge_cut(A, pSpectral)
+            println("Computing recursive bisection for spectral partitioning for mesh $mesh with $n_parts partitions")
+            pSpectral = rec_bisection(spectral_part, n_levels, A)
+            pAll[i, 1 + j] = count_edge_cut(A, pSpectral)
 
             #   2.  METIS
-            # println("Computing recursive bisection for METIS for mesh $mesh with $n_parts partitions")
-            # pMetis = metis_part(A, n_parts, :RECURSIVE);
-            # pAll[i, 3 + j] = count_edge_cut(A, pMetis)
+            println("Computing recursive bisection for METIS for mesh $mesh with $n_parts partitions")
+            pMetis = metis_part(A, n_parts, :RECURSIVE);
+            pAll[i, 3 + j] = count_edge_cut(A, pMetis)
             
             #   3.  Coordinate
             println("Computing recursive bisection for coordinate partitioning for mesh $mesh with $n_parts partitions")
-            pCoordinate = rec_bisection(coordinate_part, n_levels, A, coords)
-            pAll[i, 5 + j] = count_edge_cut(A, pCoordinate)
+            pCoordinate = rec_bisection("coordinate_part", n_levels, A, coords)
+            pAll[i, 5 + j] = count_edge_cut(A, p)
             
             #   4.  Inertial
             println("Computing recursive bisection for inertial partitioning for mesh $mesh with $n_parts partitions")
@@ -76,5 +76,34 @@ function benchmark_recursive()
     #   Print result table
     header =(hcat(["Mesh"], algs), ["" "8 n_parts" "16 n_parts" "8 n_parts" "16 n_parts" "8 n_parts" "16 n_parts" "8 n_parts" "16 n_parts"])
     pretty_table(pAll; header = header, crop = :none, header_crayon = crayon"bold cyan")
+    
+    latex_table = latexify(pAll; header=header, latex_header_options="|c|c|c|c|c|c|c|c|c|c|", env=:table)
+
+    latex_doc = latexstring("""
+    \\documentclass{article}
+    \\usepackage{booktabs}
+    \\usepackage{array}
+    \\begin{document}
+    $latex_table
+    \\end{document}
+    """)
+
+    open("output.tex", "w") do io
+        write(io, latex_doc)
+    end
+    
+    # run(`pdflatex output.tex`)
+
+
+
+
+
+    # path_file = "./Meshes/2D/airfoil1.mat"
+    # A, coords = read_mat_graph(path_file);
+    # #   Bisect, draw & save the airfoil1
+    # p = rec_bisection("coordinate_part", 3, A, coords)
+    # fig = draw_graph(A, coords, p)
+    # save("airfoil1.pdf", fig)
+
 end
 
