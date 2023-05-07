@@ -3,12 +3,21 @@
 function create_adjacency_matrix(data::Matrix{Float64})
     n = maximum(data)
     A = zeros(Int64, n, n)
+    rows = Int[]
+    cols = Int[]
+    vals = Int[]
 
     for (i, j) in eachrow(data)
-        A[Int64(i), Int64(j)] = 1
-        A[Int64(j), Int64(i)] = 1
-    end
+        rows = push!(rows, i)
+        cols = push!(cols, j)
+        vals = push!(vals, 1)
 
+        rows = push!(rows, j)
+        cols = push!(cols, i)
+        vals = push!(vals, 1)
+    end
+    
+    A = sparse(rows, cols, vals, n, n)
     return A
 end
 
@@ -31,7 +40,9 @@ function read_csv_graph(path_file)
 
     #   3.  Visualize and save the result 
     #       use drawGraph(A, coords)
-    drawGraph(A, coords)
+    fig = drawGraph(A, coords)
+    mesh = replace(path_file, ".csv", "")
+    savefig(fig, $mesh*"_graph.png")
     
     #   4.  Return the matrix A and the coordinates 
     #       return(A, coords)

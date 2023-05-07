@@ -16,10 +16,10 @@ function benchmark_metis()
 
     #   Init result array
     pAll = Array{Any}(undef, length(meshes_roads), length(algs) + 1)
-    for (i, n_levels) in enumerate([3, 4])
+    for (i, n_levels) in enumerate([4, 5])
         for (j, mesh) in enumerate(meshes_roads)
-            n_parts = 2^i
-            println("Benchmarking recursive bisection for mesh $mesh with $n_parts partitions")
+            exponent = 2^i
+            println("Benchmarking recursive bisection for mesh $mesh with $exponent partitions")
             #   Define path to mat file
             path = joinpath(dirname(@__DIR__),"Meshes","Roads",mesh*".mat");
 
@@ -41,7 +41,7 @@ function benchmark_metis()
             println("Starting METIS")
             # Starting METIS method KWAY
             println("Computing recursive bisection for METIS for mesh $mesh with $n_levels partitions with KWAY")
-            pMetis = metis_part(A, n_parts, :KWAY);
+            pMetis = metis_part(A, exponent, :KWAY);
             pAll[i, j] = count_edge_cut(A, pMetis)
 
             #   b)  METIS RECURSIVE 
@@ -56,29 +56,32 @@ function benchmark_metis()
         for (j, mesh) in enumerate(meshes_maps)
             path = joinpath(dirname(@__DIR__),"Meshes","Countries",mesh*".csv")
             A, coords = read_csv_graph(path)
-            fig = draw_graph(A, coords)
-            savefig(fig, $mesh*"_graph.png")
 
             #   a)  METIS KWAY
             println("Starting METIS")
             # Starting METIS method KWAY
             println("Computing recursive bisection for METIS for mesh $mesh with $n_levels partitions with KWAY")
-            pMetis = metis_part(A, n_parts, :KWAY);
-            pAll[i, j] = count_edge_cut(A, pMetis)
+            pMetis = metis_part(A, exponent, :KWAY);
+            pAll[i, j + 4] = count_edge_cut(A, pMetis)
 
             #   b)  METIS RECURSIVE 
             # Starting METIS method RECURSIVE
             println("Computing recursive bisection for METIS for mesh $mesh with $n_levels partitions with RECURSIVE")
             pMetis = metis_part(A, n_levels, :RECURSIVE);
-            pAll[i, j + 1] = count_edge_cut(A, pMetis)
-            
+            pAll[i, j + 5] = count_edge_cut(A, pMetis)
 
             
         end
 
     end
     #   3.  Visualize the results for 32 partitions.
+
+    io = IOBuffer()
     #   Print result table
-    header =(hcat(["Partitions"], ""), ["" "Luxemburg" "" "usroads-48" "" "Greece" "" "Switzerland" "" "Vietnam" "" "Norway" "" "Russia"])
-    pretty_table(pAll; header = header, crop = :none, header_crayon = crayon"bold cyan")
+    header =(hcat(["Partitions"], ""), ["" "Luxemburg" "" "usroads-48" "" "Greece" "" "Switzerland" "" "Vietnam" "" "Norway" "" "Russia" "" "Great Britain" "" "Chile"])
+    pretty_table(io, pAll; header = header, crop = :none, header_crayon = crayon"bold cyan")
+
+    open("metis_benchmark.txt", "w") do file
+        print(file, String(take!(io)))
+    end
 end

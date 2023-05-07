@@ -54,8 +54,14 @@ function benchmark_bisection()
         pAll[i, 5] = count_edge_cut(A, pInertial);         
     end
 
+    io = IOBuffer()
+
     #   Print table
     header =(hcat(["Mesh"], algs), ["" "" "v.5.1.0" "" ""])
-    pretty_table(pAll; header = header, crop = :none, header_crayon = crayon"bold green")
+    pretty_table(io, pAll; header = header, crop = :none, header_crayon = crayon"bold green")
+
+    open("bisection_benchmark.txt", "w") do file
+        print(file, String(take!(io)))
+    end
 
 end

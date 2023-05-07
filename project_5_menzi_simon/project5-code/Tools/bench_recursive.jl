@@ -73,23 +73,14 @@ function benchmark_recursive()
         end
     end
 
+    io = IOBuffer()
+
     #   Print result table
     header =(hcat(["Mesh"], algs), ["" "8 n_parts" "16 n_parts" "8 n_parts" "16 n_parts" "8 n_parts" "16 n_parts" "8 n_parts" "16 n_parts"])
-    pretty_table(pAll; header = header, crop = :none, header_crayon = crayon"bold cyan")
+    pretty_table(io, pAll; header = header, crop = :none, header_crayon = crayon"bold cyan")
     
-    latex_table = latexify(pAll; header=header, latex_header_options="|c|c|c|c|c|c|c|c|c|c|", env=:table)
-
-    latex_doc = latexstring("""
-    \\documentclass{article}
-    \\usepackage{booktabs}
-    \\usepackage{array}
-    \\begin{document}
-    $latex_table
-    \\end{document}
-    """)
-
-    open("output.tex", "w") do io
-        write(io, latex_doc)
+    open("recursive_benchmark.txt", "w") do file
+        print(file, String(take!(io)))
     end
     
     # run(`pdflatex output.tex`)
