@@ -39,26 +39,26 @@ function benchmark_recursive()
 
             #   Recursive routines
             #   1.  Spectral
-            # println("Computing recursive bisection for spectral partitioning for mesh $mesh with $n_parts partitions")
-            # pSpectral = rec_bisection(spectral_part, n_levels, A)
-            # pAll[i, 1 + j] = count_edge_cut(A, pSpectral)
+            println("Computing recursive bisection for spectral partitioning for mesh $mesh with $n_parts partitions")
+            pSpectral = rec_bisection(spectral_part, n_levels, A)
+            pAll[i, 1 + j] = count_edge_cut(A, pSpectral)
 
-            # #   2.  METIS
-            # println("Computing recursive bisection for METIS for mesh $mesh with $n_parts partitions")
-            # pMetis = metis_part(A, n_parts, :RECURSIVE);
-            # pAll[i, 3 + j] = count_edge_cut(A, pMetis)
+            #   2.  METIS
+            println("Computing recursive bisection for METIS for mesh $mesh with $n_parts partitions")
+            pMetis = metis_part(A, n_parts, :RECURSIVE);
+            pAll[i, 3 + j] = count_edge_cut(A, pMetis)
             
-            # #   3.  Coordinate
-            # println("Computing recursive bisection for coordinate partitioning for mesh $mesh with $n_parts partitions")
-            # pCoordinate = rec_bisection("coordinate_part", n_levels, A, coords)
-            # pAll[i, 5 + j] = count_edge_cut(A, pCoordinate)
+            #   3.  Coordinate
+            println("Computing recursive bisection for coordinate partitioning for mesh $mesh with $n_parts partitions")
+            pCoordinate = rec_bisection("coordinate_part", n_levels, A, coords)
+            pAll[i, 5 + j] = count_edge_cut(A, pCoordinate)
             
             #   4.  Inertial
             println("Computing recursive bisection for inertial partitioning for mesh $mesh with $n_parts partitions")
             pInertial = rec_bisection(inertial_part, n_levels, A, coords)
             pAll[i, 7 + j] = count_edge_cut(A, pInertial)
 
-            if mesh == "crack" && n_parts == 8
+            if mesh == "crack" && n_parts == 16
                 println("Plotting graphs for mesh $mesh with $n_parts levels")
                 # figSpectral = draw_graph(A, coords, pSpectral)
                 # save(mesh * "_spectral_" * string(n_parts) * ".pdf", figSpectral)

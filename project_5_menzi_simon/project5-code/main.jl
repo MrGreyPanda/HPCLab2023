@@ -27,27 +27,27 @@ include("./Tools/add_paths.jl");
 # fig = draw_fiedler(A, coords)
 # save("airfoil1_fiedler.pdf", fig)
 
-#   Run benchmark
-# println("Running benchmark_bisection")
-# benchmark_bisection()
-# println("")
-# println("Running benchmark_recursive")
-# benchmark_recursive()
-# println("")
+  ## Run benchmark
+println("Running benchmark_bisection")
+benchmark_bisection()
+println("")
+println("Running benchmark_recursive")
+benchmark_recursive()
+println("")
 # println("Running benchmark_metis")
 # benchmark_metis()
 # println("Creating the csv files")
 # save_csv_mats()
 
 # Draw Fiedler
-println("Drawing the fiedler...")
-meshes = ["./Meshes/2D/mesh3e1.mat", "./Meshes/2D/barth4.mat", "./Meshes/2D/3elt.mat", "./Meshes/2D/crack.mat", "./Meshes/2D/airfoil1.mat"]
-for mesh in meshes
-    A, coords = read_mat_graph(mesh);
-    println("Drawing the fiedler for $(split(mesh, "/")[end])...")
-    fig = draw_fiedler(A, coords)
-    save("$(split(mesh, "/")[end])_fiedler.pdf", fig)
-end
+# println("Drawing the fiedler...")
+# meshes = ["./Meshes/2D/mesh3e1.mat", "./Meshes/2D/barth4.mat", "./Meshes/2D/3elt.mat", "./Meshes/2D/crack.mat", "./Meshes/2D/airfoil1.mat"]
+# for mesh in meshes
+#     A, coords = read_mat_graph(mesh);
+#     println("Drawing the fiedler for $(split(mesh, "/")[end])...")
+#     fig = draw_fiedler(A, coords)
+#     save("$(split(mesh, "/")[end])_fiedler.pdf", fig)
+# end
 
 # for mesh in meshes
 #     A, coords = read_mat_graph(mesh);
