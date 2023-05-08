@@ -18,30 +18,37 @@ function inertial_part(A, coords)
     
     #   1.  Compute the center of mass.
     n = size(coords)[1]
-    center_of_mass = sum(coords, dims=1) / n
-    x = sum(coords[:,1]) / n
-    y = sum(coords[:,2]) / n
+    x_bar = sum(coords[:,1]) / n
+    y_bar = sum(coords[:,2]) / n
+    x = coords[:,1]
+    y = coords[:,2]
+    center = [x_bar, y_bar]
 
     #   2.  Construct the matrix M. (see pdf of the assignment)
-    S_xx = sum((coords[:, 1] .- x).^2)
-    S_yy = sum((coords[:, 2] .- y).^2)
-    S_xy = dot(coords[:, 1], coords[:, 2]) + x * y 
-         - sum(coords[:, 1] .* y) 
-         - sum(coords[:, 2] .* x)
+    S_xx = sum((x .- x_bar).^2)
+    S_yy = sum((y .- y_bar).^2)
+    # S_xy = dot(x, y) + x_bar * y_bar 
+    #      - sum(x .* y_bar) 
+    #      - sum(y .* x_bar)
+    S_xy = sum((x .- x_bar) .* (y .- y_bar))
 
-    M = [S_yy S_xy;
-         S_xy S_xx]
+    M = [[S_xx S_xy]
+         [S_xy S_yy]]
+
 
 
     #   3.  Compute the eigenvector associated with the smallest eigenvalue of M.
     # eigv = eigvecs(M)[:, 1]
-    F = eigen(M)
-    eigv = F.vectors[:,1]
+    val, vec = eigs(M, nev=1, which=:SM, ritzvec=true)
+    i = sortperm(val)
+    eigv = vec[:,i]
+    eigv = eigv / norm(eigv)
+    eigv = [eigv[2], -eigv[1]]
 
+    
     #   4.  Partition the nodes around line L 
     #       (you may use the function partition(coords, eigv))
-    p = ones(Int, size(A)[1])
-
+    p = ones(Int, n)
     V1, V2 = partition(coords, eigv)
     p[V2] .= 2
     

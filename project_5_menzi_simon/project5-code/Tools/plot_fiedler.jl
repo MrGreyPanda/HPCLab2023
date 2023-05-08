@@ -10,21 +10,27 @@ function draw_fiedler(A, coords)
     x = coords[:, 1]
     y = coords[:, 2]
 
-
     #   2.  Compute fiedler vector entries
-    L = degree_matrix(A) - A
-    F = eigen(L)
-    fiedler_vec1 = F.vectors[:, 1]
-    fiedler_vec2 = F.vectors[:, 2]
-    fiedler_val1 = F.values[1]
-    fiedler_val2 = F.values[2]
+    D = degree_matrix(A)
+    D_vec = diag(D)
+    L = D - A
+    val, vec = eigs(L, nev=2, which=:SM, ritzvec=true)
+    # fiedler_vec1 = F.vectors[:, 1]
+    fiedler_vec = vec[:, 2]
+    # fiedler_val1 = F.values[1]
+    fiedler_val = val[2]
+    fiedler_vec ./= norm(fiedler_vec)
+    
 
     #   3.  Compute the indicator vector
     p = ones(Int, size(A)[1])
-    p[fiedler_vec1 .> 0] .= 2
-
+    p[fiedler_vec .> 0] .= 2
 
     #   4.  Plot using e.g. Makie.scatter
-    scatter(coords[:, 1], coords[:, 2], fiedler_vec, color = p, markersize = 2)
+    fig = Figure()
+    ax = Axis3(fig[1, 1], aspect=(1, 1, 1))
+
+    scatter!(x, y, fiedler_vec, color = p, markersize = 2)
+    return fig
 
 end

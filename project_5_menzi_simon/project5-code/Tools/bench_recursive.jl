@@ -12,8 +12,9 @@ julia> function benchmark_recursive()
 """
 function benchmark_recursive()
     #   List the meshes to compare
-    meshes = ["airfoil1" "netz4504_dual" "stufe" "3elt" "barth4" "ukerbe1" "crack" "mesh3e1"]
+    # meshes = ["airfoil1" "netz4504_dual" "stufe" "3elt" "barth4" "ukerbe1" "crack" "mesh3e1"]
 
+    meshes = ["crack"]
     # meshes = ["crack"]
 
     #   List the algorithms to recursively run and compare
@@ -38,39 +39,39 @@ function benchmark_recursive()
 
             #   Recursive routines
             #   1.  Spectral
-            println("Computing recursive bisection for spectral partitioning for mesh $mesh with $n_parts partitions")
-            pSpectral = rec_bisection(spectral_part, n_levels, A)
-            pAll[i, 1 + j] = count_edge_cut(A, pSpectral)
+            # println("Computing recursive bisection for spectral partitioning for mesh $mesh with $n_parts partitions")
+            # pSpectral = rec_bisection(spectral_part, n_levels, A)
+            # pAll[i, 1 + j] = count_edge_cut(A, pSpectral)
 
-            #   2.  METIS
-            println("Computing recursive bisection for METIS for mesh $mesh with $n_parts partitions")
-            pMetis = metis_part(A, n_parts, :RECURSIVE);
-            pAll[i, 3 + j] = count_edge_cut(A, pMetis)
+            # #   2.  METIS
+            # println("Computing recursive bisection for METIS for mesh $mesh with $n_parts partitions")
+            # pMetis = metis_part(A, n_parts, :RECURSIVE);
+            # pAll[i, 3 + j] = count_edge_cut(A, pMetis)
             
-            #   3.  Coordinate
-            println("Computing recursive bisection for coordinate partitioning for mesh $mesh with $n_parts partitions")
-            pCoordinate = rec_bisection("coordinate_part", n_levels, A, coords)
-            pAll[i, 5 + j] = count_edge_cut(A, pCoordinate)
+            # #   3.  Coordinate
+            # println("Computing recursive bisection for coordinate partitioning for mesh $mesh with $n_parts partitions")
+            # pCoordinate = rec_bisection("coordinate_part", n_levels, A, coords)
+            # pAll[i, 5 + j] = count_edge_cut(A, pCoordinate)
             
             #   4.  Inertial
             println("Computing recursive bisection for inertial partitioning for mesh $mesh with $n_parts partitions")
             pInertial = rec_bisection(inertial_part, n_levels, A, coords)
             pAll[i, 7 + j] = count_edge_cut(A, pInertial)
 
-            # if mesh == "crack" && n_parts == 16
-            #     # println("Plotting graphs for mesh $mesh with $n_parts levels")
-            #     # figSpectral = draw_graph(A, coords, pSpectral)
-            #     # save(mesh * "_spectral_" * string(n_parts) * ".pdf", figSpectral)
+            if mesh == "crack" && n_parts == 8
+                println("Plotting graphs for mesh $mesh with $n_parts levels")
+                # figSpectral = draw_graph(A, coords, pSpectral)
+                # save(mesh * "_spectral_" * string(n_parts) * ".pdf", figSpectral)
 
-            #     # figMetis = draw_graph(A, coords, pMetis)
-            #     # save(mesh * "_metis_" * string(n_parts) * ".pdf", figMetis)
+                # figMetis = draw_graph(A, coords, pMetis)
+                # save(mesh * "_metis_" * string(n_parts) * ".pdf", figMetis)
             
-            #     # figCoordinate = draw_graph(A, coords, pCoordinate)
-            #     # save(mesh * "_coordinate_" * string(n_parts) * ".pdf", figCoordinate)
+                # figCoordinate = draw_graph(A, coords, pCoordinate)
+                # save(mesh * "_coordinate_" * string(n_parts) * ".pdf", figCoordinate)
 
-            #     figInertial = draw_graph(A, coords, pInertial)
-            #     save(mesh * "_inertial_" * string(n_parts) * ".pdf", figInertial)
-            # end
+                figInertial = draw_graph(A, coords, pInertial)
+                save(mesh * "_inertial_" * string(n_parts) * ".pdf", figInertial)
+            end
         end
     end
 

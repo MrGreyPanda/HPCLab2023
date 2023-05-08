@@ -31,10 +31,16 @@ include("./Tools/add_paths.jl");
 # println("Running benchmark_bisection")
 # benchmark_bisection()
 # println("")
-# println("Running benchmark_recursive")
-# benchmark_recursive()
-# println("")
-println("Running benchmark_metis")
-benchmark_metis()
+println("Running benchmark_recursive")
+benchmark_recursive()
+println("")
+# println("Running benchmark_metis")
+# benchmark_metis()
 # println("Creating the csv files")
 # save_csv_mats()
+
+# Draw Fiedler
+# println("Drawing the fiedler...")
+# A, coords = read_mat_graph("./Meshes/2D/airfoil1.mat");
+# fig = draw_fiedler(A, coords)
+# save("airfoil1_fiedler.pdf", fig)

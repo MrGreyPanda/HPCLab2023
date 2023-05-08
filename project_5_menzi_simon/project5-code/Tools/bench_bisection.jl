@@ -34,24 +34,26 @@ function benchmark_bisection()
         pAll[i, 1] = mesh
 
         #   Coordinate bisection
-        println("Coordinate bisection...")
-        pCoordinate = coordinate_part(A, coords);
-        pAll[i, 2] = count_edge_cut(A, pCoordinate);
+        # println("Coordinate bisection...")
+        # pCoordinate = coordinate_part(A, coords);
+        # pAll[i, 2] = count_edge_cut(A, pCoordinate);
 
-        #   METIS bisection
-        println("METIS bisection...")
-        pMetis = metis_part(A, 2, :KWAY);
-        pAll[i, 3] = count_edge_cut(A, pMetis);
+        # #   METIS bisection
+        # println("METIS bisection...")
+        # pMetis = metis_part(A, 2, :KWAY);
+        # pAll[i, 3] = count_edge_cut(A, pMetis);
 
-        #   Spectral bisection
-        println("Spectral bisection...")
-        pSpectral = spectral_part(A);
-        pAll[i, 4] = count_edge_cut(A, pSpectral);
+        # #   Spectral bisection
+        # println("Spectral bisection...")
+        # pSpectral = spectral_part(A);
+        # pAll[i, 4] = count_edge_cut(A, pSpectral);
 
         #   Inertial bisection
         println("Inertial bisection...")
         pInertial = inertial_part(A, coords);
-        pAll[i, 5] = count_edge_cut(A, pInertial);         
+        pAll[i, 5] = count_edge_cut(A, pInertial); 
+        fig = draw_graph(A, coords, pInertial)
+        save("$(mesh)_inertial.pdf", fig)
     end
 
     io = IOBuffer()
