@@ -2,11 +2,12 @@
 #   M.L. for High Performance Computing Lab @USI & @ETHZ - malik.lechekhab@usi.ch 
 
 function degree_matrix(A)
-    n = size(A, 1)
-    D = zeros(Float64, n, n)
-    for i in 1:n
-        D[i, i] = sum(A[i, :])
-    end
+    # n = size(A, 1)
+    # D = zeros(Float64, n, n)
+    # for i in 1:n
+    #     D[i, i] = sum(A[i, :])
+    # end
+    D = diagm((vec(sum(A, dims=2))))
     return D
 end
 

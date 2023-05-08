@@ -12,7 +12,9 @@ julia> function benchmark_recursive()
 """
 function benchmark_recursive()
     #   List the meshes to compare
-    meshes = ["airfoil1" "netz4504_dual" "stufe" "3elt" "barth4" "ukerbe1" "crack"]
+    # meshes = ["airfoil1" "netz4504_dual" "stufe" "3elt" "barth4" "ukerbe1" "crack"]
+
+    meshes = ["crack"]
 
     #   List the algorithms to recursively run and compare
     algs = ["Spectral" "Spectral" "Metis" "Metis" "Coordinate" "Coordinate" "Inertial" "Inertial"]
@@ -25,9 +27,8 @@ function benchmark_recursive()
         #   Define path to mat file
         path = joinpath(dirname(@__DIR__),"Meshes","2D",mesh*".mat");
         
-        for (j, n_levels) in enumerate([3, 4])
-            n_parts = 2^j
-            println("Benchmarking recursive bisection for mesh $mesh with $n_parts partitions")
+        for (j, n_levels) in enumerate([4])
+            n_parts = 2^n_levels
         
             #   Read data
             A, coords = read_mat_graph(path)
@@ -37,19 +38,19 @@ function benchmark_recursive()
 
             #   Recursive routines
             #   1.  Spectral
-            println("Computing recursive bisection for spectral partitioning for mesh $mesh with $n_parts partitions")
-            pSpectral = rec_bisection(spectral_part, n_levels, A)
-            pAll[i, 1 + j] = count_edge_cut(A, pSpectral)
+            # println("Computing recursive bisection for spectral partitioning for mesh $mesh with $n_parts partitions")
+            # pSpectral = rec_bisection(spectral_part, n_levels, A)
+            # pAll[i, 1 + j] = count_edge_cut(A, pSpectral)
 
-            #   2.  METIS
-            println("Computing recursive bisection for METIS for mesh $mesh with $n_parts partitions")
-            pMetis = metis_part(A, n_parts, :RECURSIVE);
-            pAll[i, 3 + j] = count_edge_cut(A, pMetis)
+            # #   2.  METIS
+            # println("Computing recursive bisection for METIS for mesh $mesh with $n_parts partitions")
+            # pMetis = metis_part(A, n_parts, :RECURSIVE);
+            # pAll[i, 3 + j] = count_edge_cut(A, pMetis)
             
-            #   3.  Coordinate
-            println("Computing recursive bisection for coordinate partitioning for mesh $mesh with $n_parts partitions")
-            pCoordinate = rec_bisection("coordinate_part", n_levels, A, coords)
-            pAll[i, 5 + j] = count_edge_cut(A, p)
+            # #   3.  Coordinate
+            # println("Computing recursive bisection for coordinate partitioning for mesh $mesh with $n_parts partitions")
+            # pCoordinate = rec_bisection("coordinate_part", n_levels, A, coords)
+            # pAll[i, 5 + j] = count_edge_cut(A, pCoordinate)
             
             #   4.  Inertial
             println("Computing recursive bisection for inertial partitioning for mesh $mesh with $n_parts partitions")
@@ -57,15 +58,15 @@ function benchmark_recursive()
             pAll[i, 7 + j] = count_edge_cut(A, pInertial)
 
             if mesh == "crack" && n_parts == 16
-                println("Plotting graphs for mesh $mesh with $n_parts levels")
-                figSpectral = draw_graph(A, coords, pSpectral)
-                save(mesh * "_spectral_" * string(n_parts) * ".pdf", figSpectral)
+                # println("Plotting graphs for mesh $mesh with $n_parts levels")
+                # figSpectral = draw_graph(A, coords, pSpectral)
+                # save(mesh * "_spectral_" * string(n_parts) * ".pdf", figSpectral)
 
-                figMetis = draw_graph(A, coords, pMetis)
-                save(mesh * "_metis_" * string(n_parts) * ".pdf", figMetis)
+                # figMetis = draw_graph(A, coords, pMetis)
+                # save(mesh * "_metis_" * string(n_parts) * ".pdf", figMetis)
             
-                figCoordinate = draw_graph(A, coords, pCoordinate)
-                save(mesh * "_coordinate_" * string(n_parts) * ".pdf", figCoordinate)
+                # figCoordinate = draw_graph(A, coords, pCoordinate)
+                # save(mesh * "_coordinate_" * string(n_parts) * ".pdf", figCoordinate)
 
                 figInertial = draw_graph(A, coords, pInertial)
                 save(mesh * "_inertial_" * string(n_parts) * ".pdf", figInertial)
@@ -83,18 +84,5 @@ function benchmark_recursive()
         print(file, String(take!(io)))
     end
     
-    # run(`pdflatex output.tex`)
-
-
-
-
-
-    # path_file = "./Meshes/2D/airfoil1.mat"
-    # A, coords = read_mat_graph(path_file);
-    # #   Bisect, draw & save the airfoil1
-    # p = rec_bisection("coordinate_part", 3, A, coords)
-    # fig = draw_graph(A, coords, p)
-    # save("airfoil1.pdf", fig)
-
 end
 

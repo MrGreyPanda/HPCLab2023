@@ -77,11 +77,12 @@ function benchmark_metis()
     #   3.  Visualize the results for 32 partitions.
 
     # io = IOBuffer()
-    # #   Print result table
-    # header =(["" "Partitions""" "Luxemburg" "" "usroads-48" "" "Greece" "" "Switzerland" "" "Vietnam" "" "Norway" "" "Russia" "" "Great Britain" "" "Chile"]
+    #   Print result table
+    # header =(["Partitions" "" "Luxemburg" "" "usroads-48" "" "Greece" "" "Switzerland" "" "Vietnam" "" "Norway" "" "Russia" "" "Great Britain" "" "Chile"]
     #               ["KWAY" "RECURSIVE" "KWAY" "RECURSIVE" "KWAY" "RECURSIVE" "KWAY" "RECURSIVE" "KWAY" "RECURSIVE" "KWAY" "RECURSIVE" "KWAY" "RECURSIVE" "KWAY" "RECURSIVE" "KWAY" "RECURSIVE"])              
     # pretty_table(io, pAll; header = header, crop = :none, header_crayon = crayon"bold cyan")
 
+    #   Save result table
     # open("metis_benchmark.txt", "w") do file
     #     print(file, String(take!(io)))
     # end

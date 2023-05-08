@@ -23,12 +23,11 @@ function inertial_part(A, coords)
     y = sum(coords[:,2]) / n
 
     #   2.  Construct the matrix M. (see pdf of the assignment)
-    S_xx = sum(coords[:, 1] .- x)
-    S_yy = sum(coords[:, 2] .- y)
-    S_xy = dot(coords[:, 1], coords[:, 2]) 
-        + x * y 
-        - sum(coords[:, 1] .* y) 
-        - sum(coords[:, 2] .* x)
+    S_xx = sum((coords[:, 1] .- x).^2)
+    S_yy = sum((coords[:, 2] .- y).^2)
+    S_xy = dot(coords[:, 1], coords[:, 2]) + x * y 
+         - sum(coords[:, 1] .* y) 
+         - sum(coords[:, 2] .* x)
 
     M = [S_yy S_xy;
          S_xy S_xx]
@@ -41,10 +40,9 @@ function inertial_part(A, coords)
 
     #   4.  Partition the nodes around line L 
     #       (you may use the function partition(coords, eigv))
-    p = zeros(Float64, size(A)[1])
+    p = ones(Int, size(A)[1])
 
     V1, V2 = partition(coords, eigv)
-    p[V1] .= 1
     p[V2] .= 2
     
     #   5.  Return the indicator vector
