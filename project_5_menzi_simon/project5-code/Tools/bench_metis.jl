@@ -12,10 +12,11 @@ julia> benchmark_metis()
 function benchmark_metis()
     #   1.  Load luxembourg_osm.mat and usroads.mat
     meshes_roads = ["luxembourg_osm" "usroads"]
-    meshes_maps = ["GR" "CH" "VN" "NO" "RU" "GB" "CL"]
+    meshes_maps = ["GR-3117" "CH-4468" "VN-4031" "NO-9935" "RU-40527" "GB-5846" "CL-13042"]
 
     #   Init result array
     pAll = Array{Any}(undef, length(meshes_roads), length(algs) + 1)
+
     for (i, n_levels) in enumerate([4, 5])
         for (j, mesh) in enumerate(meshes_roads)
             exponent = 2^i
@@ -54,7 +55,7 @@ function benchmark_metis()
         end
         
         for (j, mesh) in enumerate(meshes_maps)
-            path = joinpath(dirname(@__DIR__),"Meshes","Countries",mesh*".csv")
+            path = joinpath(dirname(@__DIR__),"Meshes","Countries","csv",mesh*".csv")
             A, coords = read_csv_graph(path)
 
             #   a)  METIS KWAY
@@ -76,14 +77,18 @@ function benchmark_metis()
     end
     #   3.  Visualize the results for 32 partitions.
 
-    # io = IOBuffer()
-    #   Print result table
-    # header =(["Partitions" "" "Luxemburg" "" "usroads-48" "" "Greece" "" "Switzerland" "" "Vietnam" "" "Norway" "" "Russia" "" "Great Britain" "" "Chile"]
-    #               ["KWAY" "RECURSIVE" "KWAY" "RECURSIVE" "KWAY" "RECURSIVE" "KWAY" "RECURSIVE" "KWAY" "RECURSIVE" "KWAY" "RECURSIVE" "KWAY" "RECURSIVE" "KWAY" "RECURSIVE" "KWAY" "RECURSIVE"])              
-    # pretty_table(io, pAll; header = header, crop = :none, header_crayon = crayon"bold cyan")
+    io = IOBuffer()
+    #  Print result table
+    header =(["Partitions" "Luxemburg" "Luxemburg" "" "usroads-48" "usroads-48" "Greece" "Greece" "Switzerland" "Switzerland" "Vietnam" "Vietnam" "Norway" "Norway" "Russia" "Russia" "Great Britain" "Great Britain" "Chile" "Chile"],
+             ["" "KWAY" "RECURSIVE" "KWAY" "RECURSIVE" "KWAY" "RECURSIVE" "KWAY" "RECURSIVE" "KWAY" "RECURSIVE" "KWAY" "RECURSIVE" "KWAY" "RECURSIVE" "KWAY" "RECURSIVE" "KWAY" "RECURSIVE"])              
+    
+    # header=(hcat)
+    pretty_table(io, pAll; header = header, crop = :none, header_crayon = crayon"bold cyan")
+
+
 
     #   Save result table
-    # open("metis_benchmark.txt", "w") do file
-    #     print(file, String(take!(io)))
-    # end
+    open("metis_benchmark.txt", "w") do file
+        print(file, String(take!(io)))
+    end
 end

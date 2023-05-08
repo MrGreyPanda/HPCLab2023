@@ -28,12 +28,33 @@ include("./Tools/add_paths.jl");
 # save("airfoil1_fiedler.pdf", fig)
 
 #   Run benchmark
-println("Running benchmark_bisection")
-benchmark_bisection()
-println("")
-println("Running benchmark_recursive")
-benchmark_recursive()
+# println("Running benchmark_bisection")
+# benchmark_bisection()
+# println("")
+# println("Running benchmark_recursive")
+# benchmark_recursive()
 # println("")
 # println("Running benchmark_metis")
 # benchmark_metis()
+meshes = ["CH-4468", "CL-13042", "GB-5946", "GR-3117", "NO-9935", "RU-40527", "VN-4031"]
 
+for mesh in meshes
+    path = joinpath(dirname(@__DIR__),"Meshes","Countries","csv",mesh)
+    A, coords = read_csv_graph(path)
+    path_graph = joinpath(dirname(@__DIR__),"Meshes","Countries","csv",mesh*"_graph.mat")
+
+    # Create a nested dictionary to store the matrices
+    variables = Dict(
+        "Problem" => Dict(
+            "A" => A,
+            "aux" => Dict(
+                "coord" => coords
+            )
+        )
+    )
+
+    # Save the matrices to a .mat file
+    file = matopen(path_graph, "w")
+    write(file, variables)
+    close(file)
+end
