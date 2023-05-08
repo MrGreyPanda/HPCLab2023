@@ -28,9 +28,9 @@ include("./Tools/add_paths.jl");
 # save("airfoil1_fiedler.pdf", fig)
 
   ## Run benchmark
-println("Running benchmark_bisection")
-benchmark_bisection()
-println("")
+# println("Running benchmark_bisection")
+# benchmark_bisection()
+# println("")
 println("Running benchmark_recursive")
 benchmark_recursive()
 println("")

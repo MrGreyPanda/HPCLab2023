@@ -52,8 +52,8 @@ function benchmark_bisection()
         println("Inertial bisection...")
         pInertial = inertial_part(A, coords);
         pAll[i, 5] = count_edge_cut(A, pInertial); 
-        fig = draw_graph(A, coords, pInertial)
-        save("$(mesh)_inertial.pdf", fig)
+        # fig = draw_graph(A, coords, pInertial)
+        # save("$(mesh)_inertial.pdf", fig)
     end
 
     io = IOBuffer()

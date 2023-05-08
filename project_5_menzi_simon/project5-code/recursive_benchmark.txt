@@ -2,5 +2,5 @@
 │  Mesh │  Spectral │   Spectral │     Metis │      Metis │ Coordinate │ Coordinate │  Inertial │   Inertial │
 │       │ 8 n_parts │ 16 n_parts │ 8 n_parts │ 16 n_parts │  8 n_parts │ 16 n_parts │ 8 n_parts │ 16 n_parts │
 ├───────┼───────────┼────────────┼───────────┼────────────┼────────────┼────────────┼───────────┼────────────┤
-│ crack │    #undef │     #undef │    #undef │     #undef │     #undef │     #undef │    1706.0 │     3447.0 │
+│ crack │     804.0 │     1303.0 │     736.0 │     1238.0 │     1344.0 │     1861.0 │    1061.0 │     1618.0 │
 └───────┴───────────┴────────────┴───────────┴────────────┴────────────┴────────────┴───────────┴────────────┘
