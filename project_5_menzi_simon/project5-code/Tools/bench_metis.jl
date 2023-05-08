@@ -41,50 +41,50 @@ function benchmark_metis()
             # Starting METIS method KWAY
             println("Computing recursive bisection for METIS for mesh $mesh with $exponent partitions with KWAY")
             pMetis_kway = metis_part(A, exponent, :KWAY);
-            pAll[i, j + 1] = count_edge_cut(A, pMetis_kway)
+            pAll[i, j*2] = count_edge_cut(A, pMetis_kway)
 
             #   b)  METIS RECURSIVE 
             # Starting METIS method RECURSIVE
             println("Computing recursive bisection for METIS for mesh $mesh with $exponent partitions with RECURSIVE")
             pMetis_rec = metis_part(A, exponent, :RECURSIVE);
-            pAll[i, j + 2] = count_edge_cut(A, pMetis_rec)
+            pAll[i, j*2 + 1] = count_edge_cut(A, pMetis_rec)
 
-            if exponent == 32
-                #saving the plots
-                println("Saving plots")
-                fig_kway = draw_graph(A, coords, pMetis_kway)
-                fig_rec = draw_graph(A, coords, pMetis_rec)
-                save("$(mesh)_metis_kway.pdf", fig_kway)
-                save("$(mesh)_metis_rec.pdf", fig_rec)
-            end
+            # if exponent == 32
+            #     #saving the plots
+            #     println("Saving plots")
+            #     fig_kway = draw_graph(A, coords, pMetis_kway)
+            #     fig_rec = draw_graph(A, coords, pMetis_rec)
+            #     save("$(mesh)_metis_kway.pdf", fig_kway)
+            #     save("$(mesh)_metis_rec.pdf", fig_rec)
+            # end
 
 
         end
         
         for (j, mesh) in enumerate(meshes_maps)
+            j = (j + length(meshes_roads))*2
             path = joinpath(dirname(@__DIR__),"Meshes","Countries","csv",mesh)
             A, coords = read_csv_graph(path);
             #   a)  METIS KWAY
-            println("Starting METIS")
             # Starting METIS method KWAY
             println("Computing recursive bisection for METIS for mesh $mesh with $exponent partitions with KWAY")
             pMetis_kway = metis_part(A, exponent, :KWAY);
-            pAll[i, j + 5] = count_edge_cut(A, pMetis_kway)
+            pAll[i, j] = count_edge_cut(A, pMetis_kway)
 
             #   b)  METIS RECURSIVE 
             # Starting METIS method RECURSIVE
             println("Computing recursive bisection for METIS for mesh $mesh with $exponent partitions with RECURSIVE")
             pMetis_rec = metis_part(A, exponent, :RECURSIVE);
-            pAll[i, j + 6] = count_edge_cut(A, pMetis_rec)
+            pAll[i, j + 1] = count_edge_cut(A, pMetis_rec)
 
-            if exponent == 32 && mesh == "RU-40527"
-                #saving the plots
-                println("Saving plots")
-                fig_kway = draw_graph(A, coords, pMetis_kway)
-                fig_rec = draw_graph(A, coords, pMetis_rec)
-                save("$(mesh)_metis_kway.pdf", fig_kway)
-                save("$(mesh)_metis_rec.pdf", fig_rec)
-            end
+            # if exponent == 32 && mesh == "RU-40527"
+            #     #saving the plots
+            #     println("Saving plots")
+            #     fig_kway = draw_graph(A, coords, pMetis_kway)
+            #     fig_rec = draw_graph(A, coords, pMetis_rec)
+            #     save("$(mesh)_metis_kway.pdf", fig_kway)
+            #     save("$(mesh)_metis_rec.pdf", fig_rec)
+            # end
             
         end
 
