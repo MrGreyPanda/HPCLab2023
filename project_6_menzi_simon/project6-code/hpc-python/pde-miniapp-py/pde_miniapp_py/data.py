@@ -278,11 +278,48 @@ class Field:
     def exchange_startall(self):
         """Start exchanging boundary field data"""
         domain = self._domain # copy for convenience
+        comm = domain._comm   # copy for convenience
         # ... implement ...
+        last_i = domain.local_nx -1
+        last_j = domain.local_ny -1
+        
+        if domain.neighbour_north >= 0:
+            self._buffN = np.copy(self._inner[:, last_j])
+            self.send_north = comm.Isend(self._buffN, dest=domain._neigh_north)
+            self.recv_north = comm.Irecv(self.bdryN, source=domain._neigh_north)
+            
+        if domain.neighbour_south >= 0:
+            self._buffS = np.copy(self._inner[:, 0])
+            self.send_south = comm.Isend(self._buffS, dest=domain._neigh_south)
+            self.recv_south = comm.Irecv(self.bdryS, source=domain._neigh_south)
+            
+        if domain.neighbour_east >= 0:
+            self._buffE = np.copy(self._inner[last_i, :])
+            self.send_east = comm.Isend(self._buffE, dest=domain._neigh_east)
+            self.recv_east = comm.Irecv(self.bdryE, source=domain._neigh_east)
+            
+        if domain.neighbour_west >= 0:
+            self._buffW = np.copy(self._inner[0, :])
+            self.send_west = comm.Isend(self._buffW, dest=domain._neigh_west)
+            self.recv_west = comm.Irecv(self.bdryW, source=domain._neigh_west)
 
     def exchange_waitall(self):
         """Wait until exchanging boundary field data is complete"""
-        # ... implement ...
+        domain = self._domain # copy for convenience
+        if domain.neighbour_north >= 0:
+            self.send_north.Wait()
+            self.recv_north.Wait()
+        if domain.neighbour_south >= 0:
+            self.send_south.Wait()
+            self.recv_south.Wait()
+            
+        if domain.neighbour_east >= 0:
+            self.send_east.Wait()
+            self.recv_east.Wait()
+            
+        if domain.neighbour_west >= 0:
+            self.send_west.Wait()
+            self.recv_west.Wait()
 
     def write_mpiio(self, fname):
         """Write field to file fname with MPI-IO"""

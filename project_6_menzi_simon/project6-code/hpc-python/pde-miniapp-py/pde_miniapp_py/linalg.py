@@ -9,14 +9,27 @@ from . import operators
 
 def hpc_dot(x, y):
     """Computes the inner product of x and y"""
-    # ... implement ...
-    return 1.e-10
+    
+    # For loop implementation
+    #prod = 0.0
+    #for i in range(0, x.domain.nloc):
+    #    prod += x.inner[i]*y.inner[i]
+    #result = np.zeros(1)
+    #comm = x.domain.comm
+    #comm.Allreduce(prod, result, op=MPI.SUM)
+    #return result
+    
+    prod = np.multiply(x.inner, y.inner).sum()
+    result = np.zeros(1)
+    comm = x.domain.comm
+    comm.Allreduce(np.array(prod), result, op=MPI.SUM)
+    return result[0]
 
 
 def hpc_norm2(x):
     """Computes the 2-norm of x"""
-    # ... implement ...
-    return 1.e-10
+    
+    return np.sqrt(hpc_dot(x, x))
 
 
 class hpc_cg:
