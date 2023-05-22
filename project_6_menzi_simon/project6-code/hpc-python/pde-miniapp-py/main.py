@@ -163,7 +163,7 @@ if __name__ == "__main__":
     while timestep < options.nt:
         # print some info
         if domain.rank == 0 and verbose_output:
-            print(f"timestep / time: {timestep:5d} / {t:10f}")
+            print(f"timestep / time: {timestep:5d} / {t:10f}", end="")
 
         # set s_new and s_old to be the solution
         s_old.inner[...] = s_new.inner[...]

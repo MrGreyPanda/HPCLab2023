@@ -283,6 +283,7 @@ class Field:
         last_i = domain.local_nx -1
         last_j = domain.local_ny -1
         
+        # send and receive data
         if domain.neighbour_north >= 0:
             self._buffN = np.copy(self._inner[:, last_j])
             self.send_north = comm.Isend(self._buffN, dest=domain._neigh_north)
@@ -306,6 +307,8 @@ class Field:
     def exchange_waitall(self):
         """Wait until exchanging boundary field data is complete"""
         domain = self._domain # copy for convenience
+        # ... implement ...
+        # wait for data to be sent and received
         if domain.neighbour_north >= 0:
             self.send_north.Wait()
             self.recv_north.Wait()

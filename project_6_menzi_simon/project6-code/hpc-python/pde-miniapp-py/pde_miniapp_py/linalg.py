@@ -21,8 +21,7 @@ def hpc_dot(x, y):
     
     prod = np.multiply(x.inner, y.inner).sum()
     result = np.zeros(1)
-    comm = x.domain.comm
-    comm.Allreduce(np.array(prod), result, op=MPI.SUM)
+    x.domain.comm.Allreduce(np.array(prod), result, op=MPI.SUM)
     return result[0]
 
 

@@ -34,7 +34,7 @@ def manager(comm, tasks):
     upcommingTask = 0
 
     for reqs in range(1, size):
-        comm.send(tasks[upcommingTask], dest=r, tag=TAG_TASK)
+        comm.send(tasks[upcommingTask], dest=reqs, tag=TAG_TASK)
        
         buffer = bytearray(10**7)
         requests[reqs - 1] = comm.irecv(buffer, source=reqs, tag=TAG_TASK_DONE)
