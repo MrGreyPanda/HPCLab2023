@@ -9,11 +9,11 @@
 # loop over resolutions
 #p=2
 for tasks in 50 100; do
-    file="runtimes_$tasks.csv"
-    (printf "nodes,workers,time\n") > "$file"
+    file="runtimes.csv"
+    (printf "nodes,workers,tasks,time\n") > "$file"
     # for nodes in 32; do
         # for workers in 33; do 
-            printf "1,$workers," >> "$file"
+            printf "1,$workers,$tasks" >> "$file"
             mpirun -np 33 python3 manager_worker.py 4001 4001 $tasks >> "$file"
             # printf "\n" >> "$file"
         done;

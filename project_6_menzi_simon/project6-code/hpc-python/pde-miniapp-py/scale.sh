@@ -12,7 +12,7 @@
 ## module load gcc python openmpi hdf5
 
 
-number_of_timings=10
+number_of_timings=3
 
 # print the header
 (printf "size,processes"
