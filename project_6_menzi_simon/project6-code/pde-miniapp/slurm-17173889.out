@@ -1,0 +1,16 @@
+Usage: main nx nt t
+  nx  number of gridpoints in x-direction and y-direction, respectively
+  nt  number of timesteps
+  t   total time
+  v   [optional] turn on verbose output
+--------------------------------------------------------------------------
+Primary job  terminated normally, but 1 process returned
+a non-zero exit code. Per user-direction, the job has been aborted.
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+mpirun detected that one or more processes exited with non-zero status, thus causing
+the job to be terminated. The first process to do so was:
+
+  Process name: [[13258,1],1]
+  Exit code:    1
+--------------------------------------------------------------------------

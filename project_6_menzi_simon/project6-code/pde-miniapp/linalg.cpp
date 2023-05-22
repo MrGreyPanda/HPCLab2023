@@ -1,17 +1,17 @@
 // linear algebra subroutines
 // Ben Cumming @ CSCS
 
-#include <iostream>
-
-#include <cmath>
-#include <cstdio>
+#include "linalg.h"
 
 #include <mpi.h>
 
-#include "linalg.h"
+#include <cmath>
+#include <cstdio>
+#include <iostream>
+
+#include "data.h"
 #include "operators.h"
 #include "stats.h"
-#include "data.h"
 
 namespace linalg {
 
@@ -33,15 +33,14 @@ using data::Field;
 // to the CG solver. This is useful if we want to avoid malloc/free calls
 // on the device for the OpenACC implementation (feel free to suggest a better
 // method for doing this)
-void cg_init(int nx, int ny)
-{
-    Ap.init(nx,ny);
-    r.init(nx,ny);
-    p.init(nx,ny);
-    Fx.init(nx,ny);
-    Fxold.init(nx,ny);
-    v.init(nx,ny);
-    xold.init(nx,ny);
+void cg_init(int nx, int ny) {
+    Ap.init(nx, ny);
+    r.init(nx, ny);
+    p.init(nx, ny);
+    Fx.init(nx, ny);
+    Fxold.init(nx, ny);
+    v.init(nx, ny);
+    xold.init(nx, ny);
 
     cg_initialized = true;
 }
@@ -52,32 +51,34 @@ void cg_init(int nx, int ny)
 
 // computes the inner product of x and y
 // x and y are vectors on length N
-double hpc_dot(Field const& x, Field const& y)
-{
-    double result = 0;
+double hpc_dot(Field const& x, Field const& y) {
+    double result        = 0;
     double result_global = 0;
-    int N = y.length();
+    int N                = y.length();
 
-    for (int i = 0; i < N; i++)
-        result += x[i] * y[i];
+    for (int i = 0; i < N; i++) result += x[i] * y[i];
 
-    // TODO compute dot product over all ranks using "MPI_Allreduce" and "data::domain.comm_cart"
+    // compute dot product over all ranks using "MPI_Allreduce" and
+    // "data::domain.comm_cart"
+    MPI_Allreduce(&result, &result_global, 1, MPI_DOUBLE, MPI_SUM,
+                  data::domain.comm_cart);
 
     return result_global;
 }
 
 // computes the 2-norm of x
 // x is a vector on length N
-double hpc_norm2(Field const& x)
-{
-    double result = 0;
+double hpc_norm2(Field const& x) {
+    double result        = 0;
     double result_global = 0;
-    int N = x.length();
+    int N                = x.length();
 
-    for (int i = 0; i < N; i++)
-        result += x[i] * x[i];
+    for (int i = 0; i < N; i++) result += x[i] * x[i];
 
-    // TODO compute norm over all ranks using "MPI_Allreduce" and "data::domain.comm_cart"
+    // compute norm over all ranks using "MPI_Allreduce" and
+    // "data::domain.comm_cart"
+    MPI_Allreduce(&result, &result_global, 1, MPI_DOUBLE, MPI_SUM,
+                  data::domain.comm_cart);
 
     return sqrt(result_global);
 }
@@ -85,12 +86,10 @@ double hpc_norm2(Field const& x)
 // sets entries in a vector to value
 // x is a vector on length N
 // value is a scalar
-void hpc_fill(Field& x, const double value)
-{
+void hpc_fill(Field& x, const double value) {
     int N = x.length();
 
-    for (int i = 0; i < N; i++)
-        x[i] = value;
+    for (int i = 0; i < N; i++) x[i] = value;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -100,94 +99,82 @@ void hpc_fill(Field& x, const double value)
 // computes y := alpha*x + y
 // x and y are vectors on length N
 // alpha is a scalar
-void hpc_axpy(Field& y, const double alpha, Field const& x)
-{
+void hpc_axpy(Field& y, const double alpha, Field const& x) {
     int N = y.length();
 
-    for (int i = 0; i < N; i++)
-        y[i] += alpha * x[i];
+    for (int i = 0; i < N; i++) y[i] += alpha * x[i];
 }
 
 // computes y = x + alpha*(l-r)
 // y, x, l and r are vectors of length N
 // alpha is a scalar
 void hpc_add_scaled_diff(Field& y, Field const& x, const double alpha,
-    Field const& l, Field const& r)
-{
+                         Field const& l, Field const& r) {
     int N = y.length();
 
-    for (int i = 0; i < N; i++)
-        y[i] = x[i] + alpha * (l[i] - r[i]);
+    for (int i = 0; i < N; i++) y[i] = x[i] + alpha * (l[i] - r[i]);
 }
 
 // computes y = alpha*(l-r)
 // y, l and r are vectors of length N
 // alpha is a scalar
-void hpc_scaled_diff(Field& y, const double alpha,
-    Field const& l, Field const& r)
-{
+void hpc_scaled_diff(Field& y, const double alpha, Field const& l,
+                     Field const& r) {
     int N = y.length();
 
-    for (int i = 0; i < N; i++)
-        y[i] = alpha * (l[i] - r[i]);
+    for (int i = 0; i < N; i++) y[i] = alpha * (l[i] - r[i]);
 }
 
 // computes y := alpha*x
 // alpha is scalar
 // y and x are vectors on length n
-void hpc_scale(Field& y, const double alpha, Field const& x)
-{
+void hpc_scale(Field& y, const double alpha, Field const& x) {
     int N = y.length();
 
-    for (int i = 0; i < N; i++)
-        y[i] = alpha * x[i];
+    for (int i = 0; i < N; i++) y[i] = alpha * x[i];
 }
 
 // computes linear combination of two vectors y := alpha*x + beta*z
 // alpha and beta are scalar
 // y, x and z are vectors on length n
 void hpc_lcomb(Field& y, const double alpha, Field const& x, const double beta,
-    Field const& z)
-{
+               Field const& z) {
     int N = y.length();
 
-    for (int i = 0; i < N; i++)
-        y[i] = alpha * x[i] + beta * z[i];
+    for (int i = 0; i < N; i++) y[i] = alpha * x[i] + beta * z[i];
 }
 
 // copy one vector into another y := x
 // x and y are vectors of length N
-void hpc_copy(Field& y, Field const& x)
-{
+void hpc_copy(Field& y, Field const& x) {
     int N = y.length();
 
-    for (int i = 0; i < N; i++)
-        y[i] = x[i];
+    for (int i = 0; i < N; i++) y[i] = x[i];
 }
 
 // conjugate gradient solver
 // solve the linear system A*deltax = b for deltax
-// the matrix A is implicit in the objective function for the diffusion equation
-// the value in deltax constitute the "first guess" at the solution
+// the matrix A is implicit in the objective function for the diffusion
+// equation the value in deltax constitute the "first guess" at the solution
 // deltax(N)
 // ON ENTRY contains the initial guess for the solution
 // ON EXIT  contains the solution
-void hpc_cg(Field& deltax, Field const& x, Field const& b, const int maxiters, const double tol, bool& success)
-{
+void hpc_cg(Field& deltax, Field const& x, Field const& b, const int maxiters,
+            const double tol, bool& success) {
     // this is the dimension of the linear system that we are to solve
     int nx = data::domain.nx;
     int ny = data::domain.ny;
 
-    if(!cg_initialized) {
-        cg_init(nx,ny);
+    if (!cg_initialized) {
+        cg_init(nx, ny);
     }
 
-// epslion value use for matrix-vector approximation
+    // epslion value use for matrix-vector approximation
     double eps     = 1.e-4;
     double eps_inv = 1. / eps;
 
     // allocate memory for temporary storage
-    hpc_fill(Fx,    0.0);
+    hpc_fill(Fx, 0.0);
 
     // matrix vector multiplication is approximated with
     // A*v = 1/epsilon * ( F(x+epsilon*v) - F(x) )
@@ -206,13 +193,11 @@ void hpc_cg(Field& deltax, Field const& x, Field const& b, const int maxiters, c
     // Fx = F(v)
     diffusion(v, Fx);
 
+    int rank;
 
-     int rank;
+    //  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-  //  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-
-  //  std::cout << rank << ">> " << time << std::endl;
-
+    //  std::cout << rank << ">> " << time << std::endl;
 
     // r = b - A*x
     // where A*x = (Fx-Fxold)/eps
@@ -226,14 +211,13 @@ void hpc_cg(Field& deltax, Field const& x, Field const& b, const int maxiters, c
 
     // check for convergence
     success = false;
-    if (sqrt(r_old_inner) < tol)
-    {
+    if (sqrt(r_old_inner) < tol) {
         success = true;
         return;
     }
 
     int iter;
-    for(iter=0; iter<maxiters; iter++) {
+    for (iter = 0; iter < maxiters; iter++) {
         // Ap = A*p
         hpc_lcomb(v, 1.0, x, eps, p);
         diffusion(v, Fx);
@@ -264,8 +248,7 @@ void hpc_cg(Field& deltax, Field const& x, Field const& b, const int maxiters, c
     }
     stats::iters_cg += iter + 1;
 
-    if (!success)
-        std::cerr << "ERROR: CG failed to converge" << std::endl;
+    if (!success) std::cerr << "ERROR: CG failed to converge" << std::endl;
 }
 
-} // namespace linalg
+}  // namespace linalg

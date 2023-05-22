@@ -46,6 +46,6 @@ pl.contourf(X, Y, data.reshape(res_y, res_x), N, alpha=.75, cmap='jet')
 C=pl.contour(X, Y, data.reshape(res_y, res_x), N, colors='black', linewidths=.1)
 
 pl.clabel(C, inline=1)
-pl.axes().set_aspect('equal')
+pl.gca().set_aspect('equal')
 pl.savefig("output.png", dpi=72)
 pl.show()
