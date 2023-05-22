@@ -127,7 +127,7 @@ class mandelbrot_patch():
         self._patch = (np.abs(z) <= 2.)
 
 def main():
-    import matplotlib.pyplot as plt
+    # import matplotlib.pyplot as plt
     x_min  = -2.
     x_max  = +1.
     nx     = 201
@@ -140,8 +140,8 @@ def main():
     for task in tasks:
         task.do_work()
     m = M.combine_tasks(tasks)
-    plt.imshow(m.T, cmap="gray", extent=[x_min, x_max, y_min, y_max])
-    plt.show()
+    # plt.imshow(m.T, cmap="gray", extent=[x_min, x_max, y_min, y_max])
+    # plt.show()
 
 if __name__ == "__main__":
     main()
