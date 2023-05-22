@@ -6,5 +6,5 @@
 #SBATCH --time=4:00:00
 #SBATCH --job-name="pde-miniapp-py"
 
-time -p mpirun python main.py 128 100 0.01 v 2>&1 | tee main.log
+time -p mpirun python main.py 128 100 0.01
 exit

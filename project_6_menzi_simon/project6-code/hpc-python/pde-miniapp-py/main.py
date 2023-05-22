@@ -10,11 +10,11 @@ def readcmdline():
     """
     # report usage
     if len(sys.argv) < 4 or len(sys.argv) > 5:
-        print("Usage: main nx ny nt t")
-        print("  nx  number of gridpoints in x- and y-direction, respectively")
-        print("  nt  number of time steps")
-        print("  tf  final time")
-        print("  v   (optional) turn on verbose output and write every step")
+        # print("Usage: main nx ny nt t")
+        # print("  nx  number of gridpoints in x- and y-direction, respectively")
+        # print("  nt  number of time steps")
+        # print("  tf  final time")
+        # print("  v   (optional) turn on verbose output and write every step")
         sys.exit()
 
     # read nx
@@ -97,7 +97,7 @@ if __name__ == "__main__":
     tolerance = 1.e-6
     skip = 10 # write output every skip time step (or just last if skip < 1)
 
-    if rank == 0:
+    if rank == 0 and verbose_output == True:
         print(80*"=")
         print('{:^80}'.format("Welcome to mini-stencil!"))
         print("version   :: MPI Python")
@@ -111,7 +111,7 @@ if __name__ == "__main__":
         print(80*"=")
 
     # print some domain decomposition specifics
-    domain.print()
+    # domain.print()
 
     # allocate global fields
     s_old  = data.Field(domain)
@@ -226,11 +226,11 @@ if __name__ == "__main__":
 
     # print table sumarizing results
     if domain.rank == 0:
-        print(f"simulation took {timespent:f} seconds")
-        print(f"{iters_cg:d} conjugate gradient iterations:",
-               "at rate of {:f} iters/second".format(iters_cg/timespent))
-        print(f"{iters_newton:d} newton iterations")
-        print(80*"-")
+        print(timespent)
+    #     print(f"{iters_cg:d} conjugate gradient iterations:",
+    #            "at rate of {:f} iters/second".format(iters_cg/timespent))
+    #     print(f"{iters_newton:d} newton iterations")
+    #     print(80*"-")
 
-    if domain.rank == 0:
-        print("=== End of simulation. Goodbye! ===")
+    # if domain.rank == 0:
+    #     print("=== End of simulation. Goodbye! ===")

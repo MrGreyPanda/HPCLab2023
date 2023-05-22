@@ -28,39 +28,37 @@ def manager(comm, tasks):
     -------
     ... ToDo ...
     """
-    commSize = comm.Get_size()
-    requests = np.zeros(commSize - 1, dtype=MPI.Request)
-    taskIds = np.zeros(commSize - 1, dtype=int)
-    nextTask = 0
+    size = comm.Get_size()
+    requests = np.zeros(size - 1, dtype=MPI.Request)
+    ids = np.zeros(size - 1, dtype=int)
+    upcommingTask = 0
 
-    for r in range(1, commSize):
-        comm.send(tasks[nextTask], dest=r, tag=TAG_TASK)
+    for r in range(1, size):
+        comm.send(tasks[upcommingTask], dest=r, tag=TAG_TASK)
         # Allocate a large enough buffer to store the result in, else we may get a MPI_ERR_TRUNCATE
-        buf = bytearray(1 << 20)
-        requests[r - 1] = comm.irecv(buf, source=r, tag=TAG_TASK_DONE)
+        buffer = bytearray(1 << 20)
+        requests[r - 1] = comm.irecv(buffer, source=r, tag=TAG_TASK_DONE)
 
         # Store which task each rank is working on
-        taskIds[r - 1] = nextTask
-        nextTask += 1
+        ids[r - 1] = upcommingTask
+        upcommingTask += 1
 
     while True:
         req = MPI.Request.waitany(requests)
         rank = req[0] + 1
         task = req[1]
 
-        print(f"id: {taskIds[rank - 1]}, task:{task}")
-
         # Save completed work
-        tasks[taskIds[rank - 1]] = task
+        tasks[ids[rank - 1]] = task
         TasksDoneByWorker[rank] += 1
 
-        if len(tasks) != nextTask:
+        if len(tasks) != upcommingTask:
             # Send new task to free worker
-            comm.send(tasks[nextTask], dest=rank, tag=TAG_TASK)
+            comm.send(tasks[upcommingTask], dest=rank, tag=TAG_TASK)
             buf = bytearray(1 << 20)
             requests[rank - 1] = comm.irecv(buf, source=rank, tag=TAG_TASK_DONE)
-            taskIds[rank - 1] = nextTask
-            nextTask += 1
+            ids[rank - 1] = upcommingTask
+            upcommingTask += 1
 
         else:
             # No more tasks left
@@ -73,8 +71,7 @@ def manager(comm, tasks):
     for i in range(len(req)):
         task = req[i]
         if task is not None:
-            print(f"id: {taskIds[i]}, task:{task}")
-            tasks[taskIds[i]] = task
+            tasks[ids[i]] = task
             TasksDoneByWorker[rank] += 1
 
     # Tell workers we are finished
@@ -97,17 +94,14 @@ def worker(comm):
     done = comm.Ibcast(b, root=0)
 
     while True:
-        req = comm.irecv(source=MANAGER, tag=TAG_TASK)
+        request = comm.irecv(source=MANAGER, tag=TAG_TASK)
 
-        tmp = MPI.Request.waitany(requests=np.array([req, done]))
+        tmp = MPI.Request.waitany(requests=np.array([request, done]))
         if done.Test():
-            print("worker done.")
-            req.Cancel()
+            request.Cancel()
             break
 
         task = tmp[1]
-        # task = req.wait()
-        # print(f"req:{req}, data:{task}")
         task.do_work()
         comm.send(task, dest=MANAGER, tag=TAG_TASK_DONE)
 
@@ -162,14 +156,14 @@ if __name__ == "__main__":
 
     # report on MPI environment
     if my_rank == MANAGER:
-        print(f"MPI initialized with {size:5d} processes")
+        # print(f"MPI initialized with {size:5d} processes")
 
         # read command line arguments
         nx, ny, ntasks = readcmdline(my_rank)
 
+
         # start timer
         timespent = - time.perf_counter()
-
         # trying out ... YOUR MANAGER-WORKER IMPLEMENTATION HERE ...
         x_min = -2.
         x_max  = +1.
@@ -178,7 +172,7 @@ if __name__ == "__main__":
         M = mandelbrot(x_min, x_max, nx, y_min, y_max, ny, ntasks)
         tasks = M.get_tasks()
     
-    if my_rank == MANAGER:
+    # if my_rank == MANAGER:
         TasksDoneByWorker = np.zeros(size, dtype=int)
         manager(comm, tasks)
         
@@ -194,10 +188,10 @@ if __name__ == "__main__":
         timespent += time.perf_counter()
 
         # inform that done
-        if my_rank == MANAGER:
-            print(f"Run took {timespent:f} seconds")
-            for i in range(size):
-                if i == MANAGER:
-                    continue
-                print(f"Process {i:5d} has done {TasksDoneByWorker[i]:10d} tasks")
-            print("Done.")
+        # if my_rank == MANAGER:
+        print(timespent)
+        for i in range(size):
+            if i == MANAGER:
+                continue
+            # print(f"Process {i:5d} has done {TasksDoneByWorker[i]:10d} tasks")
+        # print("Done.")
