@@ -32,7 +32,7 @@ for p in 1 2 4 8 12 16 20 24 28 32; do
         t=1
         while [ $t -le $number_of_timings ]; do
             printf "," >> runtimes.csv
-            mpirun -np $p python3 main.py $n 100 0.005
+            mpirun -np $p --oversubscribe python3 main.py $n 100 0.005
             # awk '{print $(NF-1)}' | \
             # sed -e 's/^[[:space:]]*//' -e 's/\ss.*$//' | \
             # tr -d '\n' >> runtimes.csv

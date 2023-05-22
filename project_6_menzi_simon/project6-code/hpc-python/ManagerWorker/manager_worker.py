@@ -33,17 +33,17 @@ def manager(comm, tasks):
     ids = np.zeros(size - 1, dtype=int)
     upcommingTask = 0
 
-    for r in range(1, size):
+    for reqs in range(1, size):
         comm.send(tasks[upcommingTask], dest=r, tag=TAG_TASK)
-        # Allocate a large enough buffer to store the result in, else we may get a MPI_ERR_TRUNCATE
-        buffer = bytearray(1 << 20)
-        requests[r - 1] = comm.irecv(buffer, source=r, tag=TAG_TASK_DONE)
+       
+        buffer = bytearray(10**7)
+        requests[reqs - 1] = comm.irecv(buffer, source=reqs, tag=TAG_TASK_DONE)
 
-        # Store which task each rank is working on
-        ids[r - 1] = upcommingTask
+        
+        ids[reqs - 1] = upcommingTask
         upcommingTask += 1
 
-    while True:
+    while len(tasks) != upcommingTask:
         req = MPI.Request.waitany(requests)
         rank = req[0] + 1
         task = req[1]
@@ -52,31 +52,28 @@ def manager(comm, tasks):
         tasks[ids[rank - 1]] = task
         TasksDoneByWorker[rank] += 1
 
-        if len(tasks) != upcommingTask:
-            # Send new task to free worker
-            comm.send(tasks[upcommingTask], dest=rank, tag=TAG_TASK)
-            buf = bytearray(1 << 20)
-            requests[rank - 1] = comm.irecv(buf, source=rank, tag=TAG_TASK_DONE)
-            ids[rank - 1] = upcommingTask
-            upcommingTask += 1
+        
+        # Send new task
+        comm.send(tasks[upcommingTask], dest=rank, tag=TAG_TASK)
+        buf = bytearray(1 << 20) # allocate enough space
+        requests[rank - 1] = comm.irecv(buf, source=rank, tag=TAG_TASK_DONE) # Start receiving
+        ids[rank - 1] = upcommingTask # Save id of task
+        upcommingTask += 1 
 
-        else:
-            # No more tasks left
-            break
 
-    # Wait for all remaining tasks
-    req = MPI.Request.waitall(requests)
+    
+    req = MPI.Request.waitall(requests) 
 
     # Save remaining results into tasks
     for i in range(len(req)):
         task = req[i]
-        if task is not None:
+        if task != None:
             tasks[ids[i]] = task
             TasksDoneByWorker[rank] += 1
 
-    # Tell workers we are finished
-    b = np.array([TAG_DONE])
-    req = comm.Ibcast(b, root=0)
+    # Send done message
+    message = np.array([TAG_DONE])
+    req = comm.Ibcast(message, root=0)
     req.Wait()
 
 
@@ -90,19 +87,23 @@ def worker(comm):
     comm : mpi4py.MPI communicator
         MPI communicator
     """
-    b = np.array([TAG_DONE])
-    done = comm.Ibcast(b, root=0)
+    message = np.array([TAG_DONE])
+    isDone = comm.Ibcast(message, root=0)
 
+    # Do tasks until done message is received
     while True:
         request = comm.irecv(source=MANAGER, tag=TAG_TASK)
 
-        tmp = MPI.Request.waitany(requests=np.array([request, done]))
-        if done.Test():
+        tmp = MPI.Request.waitany(requests=np.array([request, isDone]))
+        # Check if done
+        if isDone.Test():
             request.Cancel()
             break
 
+        # Do task
         task = tmp[1]
         task.do_work()
+        # Send result
         comm.send(task, dest=MANAGER, tag=TAG_TASK_DONE)
 
 
